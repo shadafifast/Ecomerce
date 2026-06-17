@@ -434,12 +434,103 @@
     <span class="topic">Desain Sistem Client-Server</span>
   </div>
   <div class="slide-body">
-    <h2 class="slide-title">Diagram Arsitektur Sistem Lengkap</h2>
+    <h2 class="slide-title">Diagram Interkoneksi Antar Fitur (Sistem Lengkap)</h2>
     <div class="grid-2-1">
       <!-- Architecture Diagram Image -->
       <div class="card" style="padding:2mm; align-items:center; justify-content:center;">
-        <div class="card-title" style="margin-bottom:2mm;"><i class="fa-solid fa-diagram-project"></i> Diagram Arsitektur Client-Server</div>
-        <img src="architecture_diagram.png" alt="Arsitektur Client-Server" style="width:100%; border-radius:5px; border:1px solid var(--border);" onerror="this.parentElement.innerHTML+='<div style=\'color:var(--text-muted);font-size:0.75rem;padding:10px;\'>Gambar arsitektur tersedia di file architecture_diagram.png</div>'">
+        <div class="card-title" style="margin-bottom:2mm;"><i class="fa-solid fa-diagram-project"></i> Diagram Alur Interkoneksi Fitur</div>
+        
+        <svg width="100%" height="auto" viewBox="0 0 500 300" style="max-height:100%; border-radius:5px; border:1px solid var(--border); background:var(--bg-card); padding:10px; font-family:sans-serif;">
+          <defs>
+            <marker id="arrow-solid" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#f8fafc"/>
+            </marker>
+            <marker id="arrow-sse" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#06b6d4"/>
+            </marker>
+          </defs>
+
+          <!-- Nodes -->
+          <!-- Katalog -->
+          <rect x="20" y="20" width="110" height="45" rx="6" fill="#334155" stroke="#f8fafc" stroke-width="1.5"/>
+          <text x="75" y="42" font-size="11" font-weight="bold" fill="#f8fafc" text-anchor="middle">Katalog Produk</text>
+          <text x="75" y="55" font-size="8" fill="#cbd5e1" text-anchor="middle">Data Utama</text>
+
+          <!-- Wishlist -->
+          <rect x="20" y="120" width="110" height="45" rx="6" fill="#334155" stroke="#e11d48" stroke-width="1.5"/>
+          <text x="75" y="142" font-size="11" font-weight="bold" fill="#f8fafc" text-anchor="middle">Wishlist</text>
+          <text x="75" y="155" font-size="8" fill="#cbd5e1" text-anchor="middle">Disimpan di Server</text>
+
+          <!-- Keranjang -->
+          <rect x="190" y="20" width="110" height="45" rx="6" fill="#334155" stroke="#eab308" stroke-width="1.5"/>
+          <text x="245" y="42" font-size="11" font-weight="bold" fill="#f8fafc" text-anchor="middle">Keranjang (Cart)</text>
+          <text x="245" y="55" font-size="8" fill="#cbd5e1" text-anchor="middle">Hitung Harga Real</text>
+
+          <!-- Checkout -->
+          <rect x="360" y="20" width="110" height="45" rx="6" fill="#334155" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="415" y="42" font-size="11" font-weight="bold" fill="#f8fafc" text-anchor="middle">Checkout</text>
+          <text x="415" y="55" font-size="8" fill="#cbd5e1" text-anchor="middle">Trx: PENDING</text>
+
+          <!-- Payment -->
+          <rect x="360" y="120" width="110" height="45" rx="6" fill="#334155" stroke="#22c55e" stroke-width="1.5"/>
+          <text x="415" y="142" font-size="11" font-weight="bold" fill="#f8fafc" text-anchor="middle">Payment Validasi</text>
+          <text x="415" y="155" font-size="8" fill="#cbd5e1" text-anchor="middle">Trx: PAID &amp; Potong Stok</text>
+
+          <!-- Tracking -->
+          <rect x="360" y="220" width="110" height="45" rx="6" fill="#334155" stroke="#6366f1" stroke-width="1.5"/>
+          <text x="415" y="242" font-size="11" font-weight="bold" fill="#f8fafc" text-anchor="middle">Order Tracking</text>
+          <text x="415" y="255" font-size="8" fill="#cbd5e1" text-anchor="middle">Progress Kirim</text>
+
+          <!-- SSE -->
+          <rect x="190" y="220" width="110" height="45" rx="6" fill="#083344" stroke="#06b6d4" stroke-width="2"/>
+          <text x="245" y="242" font-size="11" font-weight="bold" fill="#22d3ee" text-anchor="middle">SSE Live Feed</text>
+          <text x="245" y="255" font-size="8" fill="#67e8f9" text-anchor="middle">Broadcast Event</text>
+
+          <!-- Main Flow Arrows (Solid) -->
+          <!-- Katalog -> Keranjang -->
+          <path d="M 130 42.5 L 180 42.5" fill="none" stroke="#f8fafc" stroke-width="2" marker-end="url(#arrow-solid)"/>
+          
+          <!-- Katalog -> Wishlist -->
+          <path d="M 75 65 L 75 110" fill="none" stroke="#f8fafc" stroke-width="2" marker-end="url(#arrow-solid)"/>
+          
+          <!-- Wishlist -> Keranjang -->
+          <path d="M 130 142.5 L 160 142.5 L 160 55 L 180 55" fill="none" stroke="#f8fafc" stroke-width="2" marker-end="url(#arrow-solid)"/>
+          
+          <!-- Keranjang -> Checkout -->
+          <path d="M 300 42.5 L 350 42.5" fill="none" stroke="#f8fafc" stroke-width="2" marker-end="url(#arrow-solid)"/>
+          
+          <!-- Checkout -> Payment -->
+          <path d="M 415 65 L 415 110" fill="none" stroke="#f8fafc" stroke-width="2" marker-end="url(#arrow-solid)"/>
+          
+          <!-- Payment -> Tracking -->
+          <path d="M 415 165 L 415 210" fill="none" stroke="#f8fafc" stroke-width="2" marker-end="url(#arrow-solid)"/>
+
+          <!-- SSE Event Arrows (Dashed, Cyan) -->
+          <!-- Keranjang -> SSE -->
+          <path d="M 245 65 L 245 210" fill="none" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="4,4" marker-end="url(#arrow-sse)"/>
+          
+          <!-- Wishlist -> SSE -->
+          <path d="M 130 155 L 160 155 L 160 242.5 L 180 242.5" fill="none" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="4,4" marker-end="url(#arrow-sse)"/>
+          
+          <!-- Checkout -> SSE -->
+          <path d="M 360 55 L 325 55 L 325 230 L 310 230" fill="none" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="4,4" marker-end="url(#arrow-sse)"/>
+          
+          <!-- Payment -> SSE -->
+          <path d="M 360 142.5 L 325 142.5 L 325 242.5 L 310 242.5" fill="none" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="4,4" marker-end="url(#arrow-sse)"/>
+          
+          <!-- Tracking -> SSE -->
+          <path d="M 360 242.5 L 310 242.5" fill="none" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="4,4" marker-end="url(#arrow-sse)"/>
+
+          <!-- Labels on Arrows -->
+          <text x="155" y="38" font-size="8" fill="#94a3b8" text-anchor="middle">Add to Cart</text>
+          <text x="325" y="38" font-size="8" fill="#94a3b8" text-anchor="middle">Create Trx</text>
+          <text x="445" y="87" font-size="8" fill="#94a3b8" text-anchor="middle">Bayar</text>
+          <text x="445" y="187" font-size="8" fill="#94a3b8" text-anchor="middle">Update</text>
+
+          <text x="280" y="105" font-size="8" fill="#06b6d4" text-anchor="middle">Trigger Event</text>
+          
+        </svg>
+Gambar arsitektur tersedia di file architecture_diagram.png</div>'">
       </div>
       <!-- Endpoint List -->
       <div class="card">
