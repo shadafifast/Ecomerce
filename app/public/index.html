@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexusTech Store - E-Commerce Client-Server</title>
+  <meta name="description" content="Simulasi E-Commerce berbasis REST API dengan fitur Payment Gateway, Wishlist, Order Tracking, dan Live Activity Feed menggunakan Server-Sent Events.">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Background gradient effects -->
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <!-- Header / Navigation -->
+  <header>
+    <div class="nav-container">
+      <div class="logo">
+        <i class="fa-solid fa-cube logo-icon"></i>
+        <span>NexusTech<span class="logo-accent">Store</span></span>
+      </div>
+      <div class="nav-actions">
+        <!-- Live Feed Indicator -->
+        <div id="sse-status" class="sse-indicator offline" title="Status koneksi Live Feed">
+          <span class="sse-dot"></span>
+          <span class="sse-label">Live Feed</span>
+        </div>
+
+        <button id="view-live-feed-btn" class="btn btn-ghost" title="Live Activity Feed">
+          <i class="fa-solid fa-satellite-dish"></i>
+          <span>Live</span>
+          <span id="live-feed-badge" class="badge badge-live" style="display:none;">0</span>
+        </button>
+
+        <button id="view-transactions-btn" class="btn btn-secondary">
+          <i class="fa-solid fa-receipt"></i> Pesanan
+        </button>
+
+        <button id="wishlist-toggle-btn" class="btn btn-secondary wishlist-btn" title="Wishlist saya">
+          <i class="fa-solid fa-heart"></i>
+          <span>Wishlist</span>
+          <span id="wishlist-badge" class="badge badge-wishlist">0</span>
+        </button>
+
+        <button id="cart-toggle-btn" class="btn btn-primary cart-btn">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span>Keranjang</span>
+          <span id="cart-badge" class="badge">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="hero-tag">E-Commerce Client-Server Architecture</span>
+      <h1>Perangkat Gaming &amp; Tech Premium</h1>
+      <p>Simulasi REST API lengkap dengan Payment Gateway, Wishlist, Order Tracking, dan Live Feed berbasis Server-Sent Events (SSE).</p>
+      <div class="hero-badges">
+        <span class="tech-badge"><i class="fa-brands fa-node-js"></i> Node.js</span>
+        <span class="tech-badge"><i class="fa-solid fa-plug"></i> REST API</span>
+        <span class="tech-badge"><i class="fa-solid fa-satellite-dish"></i> SSE</span>
+        <span class="tech-badge"><i class="fa-brands fa-js"></i> Vanilla JS</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    <!-- Product Catalog Section -->
+    <section class="catalog-section">
+      <div class="section-header">
+        <h2>Katalog Produk</h2>
+        <p>Data diambil dari server via REST API <code>GET /api/products</code></p>
+      </div>
+      <div id="products-grid" class="products-grid">
+        <div class="loading-spinner">
+          <i class="fa-solid fa-circle-notch fa-spin"></i>
+          <p>Memuat produk dari server...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================ -->
+  <!-- CART SIDEBAR -->
+  <!-- ============================================================ -->
+  <div id="cart-sidebar" class="sidebar">
+    <div class="sidebar-backdrop" id="cart-backdrop"></div>
+    <div class="sidebar-content">
+      <div class="sidebar-header">
+        <h3><i class="fa-solid fa-cart-shopping"></i> Keranjang Belanja</h3>
+        <button id="close-cart-btn" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="cart-items-container" class="sidebar-body"></div>
+      <div class="sidebar-footer">
+        <div class="summary-row">
+          <span>Total Qty</span>
+          <span id="cart-total-qty">0</span>
+        </div>
+        <div class="summary-row total-row">
+          <span>Total Bayar</span>
+          <span id="cart-total-price">Rp 0</span>
+        </div>
+        <button id="checkout-btn" class="btn btn-primary btn-block" disabled>
+          <i class="fa-solid fa-credit-card"></i> Checkout Sekarang
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- WISHLIST SIDEBAR -->
+  <!-- ============================================================ -->
+  <div id="wishlist-sidebar" class="sidebar sidebar-right">
+    <div class="sidebar-backdrop" id="wishlist-backdrop"></div>
+    <div class="sidebar-content">
+      <div class="sidebar-header">
+        <h3><i class="fa-solid fa-heart" style="color: var(--accent)"></i> Wishlist Saya</h3>
+        <button id="close-wishlist-btn" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="wishlist-items-container" class="sidebar-body"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAYMENT MODAL -->
+  <!-- ============================================================ -->
+  <div id="payment-modal" class="modal">
+    <div class="modal-backdrop" id="payment-backdrop"></div>
+    <div class="modal-content modal-payment">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-money-bill-wave" style="color: #22c55e;"></i> Proses Pembayaran</h3>
+        <button id="close-payment-btn" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body payment-body">
+        <div class="payment-invoice">
+          <div class="invoice-label">No. Tagihan</div>
+          <div id="payment-trx-id" class="invoice-trx-id">TRX-XXXXXX</div>
+          <div class="invoice-items-list" id="payment-items-list"></div>
+          <div class="invoice-total-row">
+            <span>TOTAL TAGIHAN</span>
+            <span id="payment-total" class="invoice-total-amount">Rp 0</span>
+          </div>
+        </div>
+
+        <div class="payment-input-section">
+          <label for="payment-amount-input" class="payment-label">
+            <i class="fa-solid fa-hand-holding-dollar"></i> Masukkan Nominal Pembayaran
+          </label>
+          <div class="payment-amount-wrapper">
+            <span class="payment-currency">Rp</span>
+            <input type="number" id="payment-amount-input" class="payment-input" placeholder="Contoh: 200000" min="0">
+          </div>
+          <div id="payment-error-msg" class="payment-error" style="display:none;"></div>
+          <div id="payment-change-preview" class="payment-change-preview" style="display:none;"></div>
+        </div>
+
+        <div class="payment-methods">
+          <p class="payment-methods-label">Simulasi Metode Pembayaran:</p>
+          <div class="payment-method-options">
+            <button class="payment-method-btn active" onclick="selectPaymentMethod(this, 'Tunai')">
+              <i class="fa-solid fa-money-bill"></i> Tunai
+            </button>
+            <button class="payment-method-btn" onclick="selectPaymentMethod(this, 'Transfer')">
+              <i class="fa-solid fa-building-columns"></i> Transfer
+            </button>
+            <button class="payment-method-btn" onclick="selectPaymentMethod(this, 'E-Wallet')">
+              <i class="fa-solid fa-wallet"></i> E-Wallet
+            </button>
+          </div>
+        </div>
+
+        <button id="pay-now-btn" class="btn btn-success btn-block">
+          <i class="fa-solid fa-lock"></i> Bayar Sekarang (POST /api/payment)
+        </button>
+        <p class="payment-note">
+          <i class="fa-solid fa-shield-halved"></i>
+          <strong>Server-Side Validation:</strong> Server memvalidasi nominal pembayaran Anda. Client tidak dapat memanipulasi total tagihan.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAYMENT SUCCESS MODAL -->
+  <!-- ============================================================ -->
+  <div id="payment-success-modal" class="modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-success">
+      <div class="success-icon-wrap">
+        <i class="fa-solid fa-circle-check success-check-icon"></i>
+      </div>
+      <h3>Pembayaran Berhasil!</h3>
+      <p id="success-trx-info" class="success-trx-info"></p>
+      <div class="success-details">
+        <div class="success-detail-row">
+          <span>Total Tagihan</span>
+          <span id="success-total"></span>
+        </div>
+        <div class="success-detail-row">
+          <span>Dibayar</span>
+          <span id="success-paid"></span>
+        </div>
+        <div class="success-detail-row highlight-row">
+          <span>Kembalian</span>
+          <span id="success-change"></span>
+        </div>
+      </div>
+      <button id="close-success-btn" class="btn btn-primary btn-block" style="margin-top:20px;">
+        <i class="fa-solid fa-check"></i> Lihat Riwayat Pesanan
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- TRANSACTION HISTORY MODAL -->
+  <!-- ============================================================ -->
+  <div id="transactions-modal" class="modal">
+    <div class="modal-backdrop" id="transactions-backdrop"></div>
+    <div class="modal-content modal-wide">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-receipt"></i> Riwayat &amp; Tracking Pesanan</h3>
+        <button id="close-transactions-btn" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="transactions-container" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- LIVE ACTIVITY FEED PANEL -->
+  <!-- ============================================================ -->
+  <div id="live-feed-panel" class="live-feed-panel">
+    <div class="live-feed-header">
+      <div class="live-feed-title">
+        <span class="sse-dot active"></span>
+        <h4>Live Activity Feed <span class="sse-tag">SSE</span></h4>
+      </div>
+      <button id="close-live-feed-btn" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="live-feed-info">
+      <i class="fa-solid fa-info-circle"></i>
+      Server mengirimkan event ke client secara real-time via <code>GET /api/events</code> (Server Push — bukan polling).
+    </div>
+    <div id="live-feed-events" class="live-feed-events">
+      <div class="live-feed-empty">
+        <i class="fa-solid fa-satellite-dish"></i>
+        <p>Menunggu event dari server...</p>
+      </div>
+    </div>
+    <div class="live-feed-footer">
+      <span id="sse-client-count">Koneksi SSE aktif: --</span>
+      <button onclick="clearLiveFeed()" class="btn-text-sm">Bersihkan</button>
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <p>&copy; 2026 NexusTech Store. Client-Server Programming Demonstration.</p>
+      <div class="footer-tech">
+        <span><i class="fa-brands fa-node-js"></i> Node.js Express</span>
+        <span><i class="fa-brands fa-js"></i> Vanilla JS</span>
+        <span><i class="fa-solid fa-server"></i> REST API</span>
+        <span><i class="fa-solid fa-satellite-dish"></i> SSE</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- App Javascript -->
+  <script src="app.js"></script>
+</body>
+</html>

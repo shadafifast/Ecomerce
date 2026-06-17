@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TUGAS AKHIR: Analisis dan Implementasi E-Commerce Client-Server</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #6366f1;
+      --secondary: #06b6d4;
+      --accent: #f43f5e;
+      --green: #22c55e;
+      --yellow: #f59e0b;
+      --bg-dark: #0b0f19;
+      --bg-panel: #131b2e;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --text-muted: #64748b;
+      --border: rgba(255,255,255,0.08);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #1a1f30;
+      color: var(--text-main);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ── A4 Landscape Slide ── */
+    .slide {
+      width: 297mm;
+      height: 210mm;
+      padding: 12mm 18mm;
+      background-color: var(--bg-dark);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid #000;
+      margin: 20px auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+
+    @media print {
+      body { background-color: transparent; }
+      .slide { margin: 0; border: none; box-shadow: none; page-break-after: always; }
+    }
+
+    /* Glows */
+    .glow-1 { position:absolute; top:-20%; left:-20%; width:60%; height:60%;
+      background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+      pointer-events:none; z-index:1; }
+    .glow-2 { position:absolute; bottom:-20%; right:-20%; width:60%; height:60%;
+      background: radial-gradient(circle, rgba(6,182,212,0.10) 0%, transparent 70%);
+      pointer-events:none; z-index:1; }
+    .glow-green { position:absolute; top:20%; right:-10%; width:40%; height:40%;
+      background: radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%);
+      pointer-events:none; z-index:1; }
+
+    /* Header / Footer */
+    .slide-header {
+      display:flex; justify-content:space-between; align-items:center;
+      border-bottom: 1px solid var(--border); padding-bottom: 3mm; z-index:2;
+    }
+    .slide-header .tag {
+      font-size:0.72rem; background:rgba(99,102,241,0.12);
+      border:1px solid rgba(99,102,241,0.25); color:var(--primary);
+      padding:2px 10px; border-radius:20px; font-weight:600; letter-spacing:0.05em;
+    }
+    .slide-header .topic { font-size:0.82rem; color:var(--text-sub); font-weight:500; }
+    .slide-footer {
+      display:flex; justify-content:space-between; align-items:center;
+      border-top:1px solid var(--border); padding-top:2.5mm;
+      font-size:0.72rem; color:var(--text-sub); z-index:2;
+    }
+    .slide-footer .author { font-weight:500; }
+    .slide-footer .slide-num {
+      background:rgba(255,255,255,0.06); padding:2px 8px; border-radius:4px;
+      font-family:'Outfit', sans-serif; font-weight:bold; color:var(--text-main);
+    }
+
+    /* Body */
+    .slide-body { flex-grow:1; padding:6mm 0; z-index:2; display:flex; flex-direction:column; }
+    .slide-title {
+      font-family:'Outfit', sans-serif; font-size:2rem; font-weight:700;
+      color:var(--text-main); margin-bottom:4mm; line-height:1.2;
+      background: linear-gradient(to right, #ffffff, var(--secondary));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+    .slide-desc { color:var(--text-sub); font-size:0.88rem; margin-bottom:4mm; line-height:1.5; }
+
+    /* Grids */
+    .grid-2  { display:grid; grid-template-columns:1fr 1fr; gap:6mm; flex-grow:1; }
+    .grid-3  { display:grid; grid-template-columns:1fr 1fr 1fr; gap:5mm; flex-grow:1; }
+    .grid-4  { display:grid; grid-template-columns:repeat(4,1fr); gap:4mm; flex-grow:1; }
+    .grid-2-1{ display:grid; grid-template-columns:2fr 1fr; gap:6mm; flex-grow:1; }
+    .grid-1-2{ display:grid; grid-template-columns:1fr 2fr; gap:6mm; flex-grow:1; }
+
+    /* Cards */
+    .card {
+      background:var(--bg-panel); border:1px solid var(--border);
+      border-radius:8px; padding:4mm; display:flex; flex-direction:column;
+    }
+    .card-title {
+      font-family:'Outfit', sans-serif; font-size:1.05rem; font-weight:600;
+      color:var(--secondary); margin-bottom:2.5mm;
+      display:flex; align-items:center; gap:7px;
+    }
+    .card-title.green { color: var(--green); }
+    .card-title.accent { color: var(--accent); }
+    .card-title.yellow { color: var(--yellow); }
+    .card-title.primary { color: var(--primary); }
+
+    /* Lists */
+    ul { list-style-position:inside; margin-bottom:3mm; }
+    li { margin-bottom:1.5mm; font-size:0.82rem; color:var(--text-main); line-height:1.4; }
+    li strong { color:var(--secondary); }
+    ol { margin-left:14px; }
+    ol li { font-size:0.82rem; margin-bottom:1.5mm; line-height:1.4; }
+
+    p.para { font-size:0.84rem; line-height:1.5; margin-bottom:3mm; color:var(--text-main); }
+
+    /* Title Slide */
+    .title-slide {
+      justify-content:center; align-items:center; text-align:center;
+      padding:20mm; flex-grow:1; display:flex; flex-direction:column;
+    }
+    .title-slide h1 {
+      font-family:'Outfit', sans-serif; font-size:2.9rem; font-weight:800;
+      line-height:1.15; margin-bottom:5mm;
+      background: linear-gradient(135deg, #ffffff 30%, var(--primary) 70%, var(--secondary) 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+    .title-slide h2 {
+      font-size:1.1rem; color:var(--text-sub); font-weight:500;
+      margin-bottom:10mm; letter-spacing:0.04em;
+    }
+    .title-meta {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:5mm;
+      width:100%; max-width:800px; margin-top:4mm;
+      border-top:1px solid var(--border); padding-top:6mm;
+    }
+    .meta-item .label { color:var(--text-sub); margin-bottom:1mm; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; }
+    .meta-item .value { font-weight:600; font-size:0.82rem; color:var(--text-main); }
+
+    /* Code Editor */
+    .editor {
+      background:#080b13; border:1px solid var(--border); border-radius:6px;
+      overflow:hidden; font-family:'Courier New', monospace; font-size:0.68rem;
+      display:flex; flex-direction:column; flex-grow:1;
+    }
+    .editor-top {
+      background:rgba(255,255,255,0.03); padding:5px 10px;
+      display:flex; justify-content:space-between; align-items:center;
+      border-bottom:1px solid var(--border); color:var(--text-sub); font-size:0.65rem;
+    }
+    .dots { display:flex; gap:4px; }
+    .dot { width:7px; height:7px; border-radius:50%; }
+    .dr { background:var(--accent); } .dy { background:#eab308; } .dg { background:#22c55e; }
+    .editor-body { padding:8px; white-space:pre-wrap; word-break:break-all;
+      line-height:1.35; flex-grow:1; overflow-y:auto; }
+    .kw { color:#f43f5e; } .str { color:#34d399; } .cm { color:#64748b; }
+    .fn { color:#60a5fa; } .num { color:#fb923c; }
+
+    /* Tables */
+    table { width:100%; border-collapse:collapse; font-size:0.74rem; }
+    th, td { border:1px solid var(--border); padding:6px 8px; text-align:left; }
+    th { background:rgba(99,102,241,0.15); color:var(--text-main); font-weight:600; }
+    tr:nth-child(even) td { background:rgba(255,255,255,0.01); }
+    td code { background:rgba(255,255,255,0.06); padding:1px 4px; border-radius:3px; font-size:0.68rem; color:var(--secondary); }
+
+    /* Badges */
+    .badge {
+      display:inline-flex; align-items:center; gap:4px;
+      padding:2px 7px; border-radius:50px; font-size:0.68rem; font-weight:700;
+    }
+    .badge-pass   { background:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.3); }
+    .badge-fail   { background:rgba(244,63,94,0.15); color:#f43f5e; border:1px solid rgba(244,63,94,0.3); }
+    .badge-warn   { background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3); }
+    .badge-primary{ background:rgba(99,102,241,0.15); color:#818cf8; border:1px solid rgba(99,102,241,0.3); }
+    .badge-cyan   { background:rgba(6,182,212,0.12); color:#22d3ee; border:1px solid rgba(6,182,212,0.25); }
+
+    /* Screenshot frames */
+    .ss-frame {
+      border:1px solid var(--border); border-radius:5px; overflow:hidden;
+      display:flex; flex-direction:column;
+    }
+    .ss-label {
+      background:rgba(255,255,255,0.05); padding:2px 6px;
+      font-size:0.58rem; color:var(--text-sub); text-align:center;
+      border-bottom:1px solid var(--border);
+    }
+    .ss-frame img { width:100%; display:block; object-fit:cover; }
+
+    /* Architecture SVG helpers */
+    .arch-box {
+      font-family:'Outfit', sans-serif;
+    }
+
+    /* Flow step */
+    .flow-row { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+    .flow-box {
+      background:var(--bg-panel); border:1px solid var(--primary);
+      border-radius:5px; padding:4px 10px; font-size:0.72rem; text-align:center; flex:1;
+    }
+    .flow-box.green { border-color:var(--green); }
+    .flow-box.cyan  { border-color:var(--secondary); }
+    .flow-box.red   { border-color:var(--accent); }
+    .flow-box.yellow{ border-color:var(--yellow); }
+    .flow-arr { color:var(--secondary); font-size:0.8rem; flex-shrink:0; }
+
+    /* Highlight box */
+    .highlight-box {
+      border-radius:6px; padding:3mm 4mm; margin-top:3mm; font-size:0.78rem;
+    }
+    .hb-indigo { background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.2); }
+    .hb-green  { background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2); }
+    .hb-red    { background:rgba(244,63,94,0.08); border:1px solid rgba(244,63,94,0.2); }
+    .hb-yellow { background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.2); }
+    .hb-cyan   { background:rgba(6,182,212,0.08); border:1px solid rgba(6,182,212,0.2); }
+
+    /* Pill tags */
+    .pill {
+      display:inline-flex; align-items:center; gap:5px;
+      background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.25);
+      color:var(--primary); font-size:0.7rem; font-weight:600;
+      padding:3px 10px; border-radius:50px; margin:1.5mm 1mm 0 0;
+    }
+    .pill.cyan { background:rgba(6,182,212,0.1); border-color:rgba(6,182,212,0.25); color:var(--secondary); }
+    .pill.green{ background:rgba(34,197,94,0.1); border-color:rgba(34,197,94,0.25); color:var(--green); }
+    .pill.red  { background:rgba(244,63,94,0.1); border-color:rgba(244,63,94,0.25); color:var(--accent); }
+    .pill.yellow{background:rgba(245,158,11,0.1); border-color:rgba(245,158,11,0.25);color:var(--yellow); }
+
+    /* Section divider */
+    .divider { border:none; border-top:1px dashed var(--border); margin:3mm 0; }
+
+    code {
+      background:rgba(255,255,255,0.06); padding:1px 5px; border-radius:3px;
+      font-size:0.75rem; color:var(--secondary); font-family:'Courier New', monospace;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== SLIDE 1: COVER ==================== -->
+<section class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div>
+  <div class="title-slide">
+    <span style="display:inline-block; background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.3); color:var(--primary); font-size:0.82rem; padding:4px 14px; border-radius:50px; margin-bottom:5mm; font-weight:600;">TUGAS AKHIR — UAS CLIENT-SERVER PROGRAMMING</span>
+    <h1>Analisis & Implementasi E-Commerce<br>Berbasis Arsitektur Client-Server</h1>
+    <h2>Studi Kasus: REST API · Payment Gateway · Wishlist · Order Tracking · Server-Sent Events</h2>
+    <div class="title-meta">
+      <div class="meta-item">
+        <div class="label">Penulis / NIM</div>
+        <div class="value">Shadafi Fastiyan / 23343084</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Mata Kuliah / Dosen</div>
+        <div class="value">Client Server Programming<br>Vikri Aulia, S.Pd., M.Kom.</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Program Studi / Tahun</div>
+        <div class="value">Informatika — Universitas Negeri Padang / 2026</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>UAS Client-Server Programming (INF2.62.6003)</span>
+    <span>Juni 2026</span>
+    <span class="slide-num">1</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 2: LATAR BELAKANG ==================== -->
+<section class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div>
+  <div class="slide-header">
+    <span class="tag">Pendahuluan</span>
+    <span class="topic">Latar Belakang · Rumusan · Tujuan</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Latar Belakang & Rumusan Masalah</h2>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-globe"></i> Latar Belakang</div>
+        <p class="para">Aplikasi e-commerce seperti <strong>Shopee</strong> dan <strong>Tokopedia</strong> melayani jutaan transaksi per hari menggunakan arsitektur <strong>Client-Server</strong> terdistribusi yang canggih.</p>
+        <p class="para">Untuk memahaminya secara mendalam, perlu dibangun simulasi nyata yang mencakup: manajemen katalog, keranjang belanja, <strong>payment gateway</strong> dengan validasi server-side, <strong>wishlist</strong>, <strong>order tracking</strong>, serta notifikasi real-time menggunakan <strong>Server-Sent Events (SSE)</strong>.</p>
+        <div class="highlight-box hb-indigo">
+          <strong style="color:var(--primary);">Setiap fitur</strong> dirancang khusus untuk memperlihatkan prinsip Client-Server yang berbeda.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-circle-question"></i> Rumusan, Tujuan & Batasan</div>
+        <ul>
+          <li><strong>Rumusan Masalah:</strong> Bagaimana arsitektur REST API & SSE berinteraksi dalam mengelola katalog, keranjang, pembayaran, wishlist, dan tracking pesanan secara aman, real-time, dan terkonsistensi?</li>
+          <li style="margin-top:2mm;"><strong>Tujuan:</strong>
+            <ul style="margin-top:1.5mm;">
+              <li>Mengimplementasikan 4 fitur utama e-commerce sebagai demonstrasi prinsip Client-Server.</li>
+              <li>Menerapkan validasi Server-Side untuk mencegah manipulasi data dari Client.</li>
+              <li>Mengimplementasikan SSE sebagai contoh <em>Server Push</em> yang berbeda dari polling REST.</li>
+            </ul>
+          </li>
+          <li style="margin-top:2mm;"><strong>Batasan:</strong> Implementasi menggunakan Node.js/Express.js dengan database in-memory di lingkungan localhost.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Pendahuluan</span>
+    <span class="slide-num">2</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 3: TINJAUAN PUSTAKA ==================== -->
+<section class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div>
+  <div class="slide-header">
+    <span class="tag">Tinjauan Pustaka</span>
+    <span class="topic">Landasan Teori</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Kajian Teori Model Client-Server</h2>
+    <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:3.5mm; flex-grow:0;">
+      <div class="card">
+        <div class="card-title" style="font-size:0.88rem;"><i class="fa-solid fa-network-wired"></i> REST API</div>
+        <p class="para" style="font-size:0.68rem;">REST adalah arsitektur <em>stateless</em> berbasis HTTP. Prinsip: <strong>Uniform Interface</strong>, pemisahan Client-Server, statelessness, cacheability <em>(Fielding, 2000)</em>.</p>
+      </div>
+      <div class="card">
+        <div class="card-title" style="font-size:0.88rem;"><i class="fa-solid fa-server"></i> Node.js Event Loop</div>
+        <p class="para" style="font-size:0.68rem;">Node.js menggunakan model <strong>asinkron non-blocking I/O</strong> dengan event loop tunggal untuk mengelola ribuan koneksi tanpa overhead thread <em>(Tilkov &amp; Vinoski, 2010)</em>.</p>
+      </div>
+      <div class="card">
+        <div class="card-title" style="font-size:0.88rem;"><i class="fa-solid fa-satellite-dish"></i> Server-Sent Events</div>
+        <p class="para" style="font-size:0.68rem;">SSE adalah mekanisme <strong>Server Push</strong> satu arah via HTTP — server mengirimkan event ke client secara real-time tanpa client polling <em>(W3C, 2021)</em>.</p>
+      </div>
+      <div class="card">
+        <div class="card-title" style="font-size:0.88rem;"><i class="fa-solid fa-shield-halved"></i> Keamanan OWASP</div>
+        <p class="para" style="font-size:0.68rem;">Mitigasi: validasi input server-side, pencegahan price-tampering, CORS, dan proteksi XSS pada rendering data dinamis <em>(OWASP, 2023)</em>.</p>
+      </div>
+      <div class="card" style="border-color:rgba(245,158,11,0.25);">
+        <div class="card-title" style="font-size:0.88rem; color:var(--yellow);"><i class="fa-solid fa-cart-shopping"></i> Domain E-Commerce</div>
+        <p class="para" style="font-size:0.68rem;">Sistem e-commerce bergantung pada manajemen <strong>state keranjang belanja</strong>, alur transaksi online, dan sinkronisasi inventori secara real-time <em>(Laudon &amp; Traver, 2021)</em>.</p>
+      </div>
+    </div>
+    <div style="margin-top:3.5mm; display:grid; grid-template-columns:1fr 1fr 1fr; gap:4mm;">
+      <div class="highlight-box hb-cyan" style="margin-top:0; font-size:0.72rem;">
+        <strong style="color:var(--secondary);">REST vs SSE:</strong> REST = <em>Client Pull</em> (client meminta data). SSE = <em>Server Push</em> (server aktif kirim event). Keduanya digunakan bersamaan di aplikasi ini.
+      </div>
+      <div class="highlight-box hb-indigo" style="margin-top:0; font-size:0.72rem;">
+        <strong style="color:var(--primary);">Payment Gateway:</strong> Validasi nominal pembayaran di server-side adalah prinsip terpenting e-commerce — mencegah manipulasi harga oleh client.
+      </div>
+      <div class="highlight-box hb-yellow" style="margin-top:0; font-size:0.72rem;">
+        <strong style="color:var(--yellow);">Referensi:</strong> Laudon &amp; Traver (2021) dikutip dalam Pembahasan (Slide 13) sebagai landasan domain e-commerce: state keranjang, inventori, dan transaksi online.
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Tinjauan Pustaka</span>
+    <span class="slide-num">3</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 4: METODOLOGI PENELITIAN ==================== -->
+<section class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div>
+  <div class="slide-header">
+    <span class="tag">Metodologi</span>
+    <span class="topic">Alur, Alat, & Pengujian</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Metodologi Penelitian & Perancangan</h2>
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-title cyan"><i class="fa-solid fa-list-check"></i> Alur Penelitian</div>
+        <ol style="font-size:0.72rem; padding-left:4mm; display:flex; flex-direction:column; gap:1.5mm; color:var(--text-sub);">
+          <li><strong>Studi Literatur:</strong> Mengkaji arsitektur REST, SSE (W3C), dan keamanan OWASP.</li>
+          <li><strong>Desain Sistem:</strong> Merancang diagram arsitektur client-server dan sequence flow.</li>
+          <li><strong>Implementasi:</strong> Membangun REST API stateless dan stateful SSE.</li>
+          <li><strong>Pengujian:</strong> Skenario Black-Box pada endpoint dan antarmuka.</li>
+        </ol>
+      </div>
+      <div class="card">
+        <div class="card-title green"><i class="fa-brands fa-node-js"></i> Alat & Teknologi</div>
+        <ul style="font-size:0.72rem; padding-left:4mm; display:flex; flex-direction:column; gap:1.5mm; color:var(--text-sub);">
+          <li><strong>Platform:</strong> Node.js v20+, Express.js (Backend)</li>
+          <li><strong>Antarmuka:</strong> HTML5, CSS3 (Vanilla), JavaScript ES6+ (Frontend)</li>
+          <li><strong>Protokol Data:</strong> HTTP/1.1 (REST), text/event-stream (SSE)</li>
+          <li><strong>Penyimpanan:</strong> JavaScript Array (In-Memory Volatil)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title yellow"><i class="fa-solid fa-vial-virus"></i> Metode Pengujian</div>
+        <ul style="font-size:0.72rem; padding-left:4mm; display:flex; flex-direction:column; gap:1.5mm; color:var(--text-sub);">
+          <li><strong>Black-Box Testing:</strong> Menguji fungsionalitas tanpa melihat struktur kode internal.</li>
+          <li><strong>Fokus Skenario:</strong>
+            <ul style="padding-left:3mm; margin-top:1mm;">
+              <li>Manipulasi nominal (Price Tampering)</li>
+              <li>Duplikasi data (Wishlist)</li>
+              <li>Status Jumping (Tracking)</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top:4mm; display:grid; grid-template-columns:1fr; gap:4mm;">
+      <div class="highlight-box hb-indigo" style="margin-top:0;">
+        <strong style="color:var(--primary);"><i class="fa-solid fa-bolt"></i> Penanganan Konkurensi & Event Loop:</strong> Node.js menggunakan <em>Single-Threaded Event Loop</em>. Untuk mencegah <em>race condition</em> saat banyak client checkout bersamaan, modifikasi stok (<code>stock -= quantity</code>) dilakukan <strong>secara sinkron di dalam thread utama</strong> tepat setelah validasi berhasil. Di produksi nyata Shopee/Tokopedia, digunakan penguncian database (Row-Level Locking) dan PM2 Cluster Mode untuk konkurensi skala masif.
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Metodologi Penelitian</span>
+    <span class="slide-num">4</span>
+  </div>
+</section>
+
+
+<!-- ==================== SLIDE 5: ARSITEKTUR SISTEM ==================== -->
+<section class="slide">
+  <div class="glow-1"></div>
+  <div class="slide-header">
+    <span class="tag">Arsitektur</span>
+    <span class="topic">Desain Sistem Client-Server</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Diagram Arsitektur Sistem Lengkap</h2>
+    <div class="grid-2-1">
+      <!-- Architecture Diagram Image -->
+      <div class="card" style="padding:2mm; align-items:center; justify-content:center;">
+        <div class="card-title" style="margin-bottom:2mm;"><i class="fa-solid fa-diagram-project"></i> Diagram Arsitektur Client-Server</div>
+        <img src="architecture_diagram.png" alt="Arsitektur Client-Server" style="width:100%; border-radius:5px; border:1px solid var(--border);" onerror="this.parentElement.innerHTML+='<div style=\'color:var(--text-muted);font-size:0.75rem;padding:10px;\'>Gambar arsitektur tersedia di file architecture_diagram.png</div>'">
+      </div>
+      <!-- Endpoint List -->
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-list-ul"></i> Semua REST Endpoints</div>
+        <div style="font-size:0.65rem; display:flex; flex-direction:column; gap:2mm;">
+          <div><span class="pill cyan">GET</span> <code>/api/products</code> — Katalog Produk</div>
+          <div><span class="pill cyan">GET</span> <code>/api/cart</code> — Isi Keranjang</div>
+          <div><span class="pill green">POST</span> <code>/api/cart</code> — Tambah ke Cart</div>
+          <div><span class="pill yellow">PUT</span> <code>/api/cart/:id</code> — Ubah Qty</div>
+          <div><span class="pill red">DEL</span> <code>/api/cart/:id</code> — Hapus Item</div>
+          <hr class="divider">
+          <div><span class="pill cyan">GET</span> <code>/api/wishlist</code> — Ambil Wishlist</div>
+          <div><span class="pill green">POST</span> <code>/api/wishlist</code> — Tambah Wishlist</div>
+          <div><span class="pill red">DEL</span> <code>/api/wishlist/:id</code> — Hapus Wishlist</div>
+          <hr class="divider">
+          <div><span class="pill green">POST</span> <code>/api/checkout</code> — Buat Tagihan</div>
+          <div><span class="pill green">POST</span> <code>/api/payment</code> — Bayar Tagihan ★</div>
+          <div><span class="pill yellow">PUT</span> <code>/api/transactions/:id/status</code> — Tracking</div>
+          <div><span class="pill cyan">GET</span> <code>/api/transactions</code> — Riwayat</div>
+          <hr class="divider">
+          <div><span class="pill" style="background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.3);color:#4ade80;">SSE</span> <code>/api/events</code> — Live Feed (Server Push)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Arsitektur Sistem</span>
+    <span class="slide-num">5</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 6: TAMPILAN APLIKASI ==================== -->
+<section class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div>
+  <div class="slide-header">
+    <span class="tag">Demo Antarmuka</span>
+    <span class="topic">Halaman Utama Aplikasi</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Tampilan Antarmuka Utama NexusTech Store</h2>
+    <div class="grid-2">
+      <div style="display:flex; flex-direction:column; gap:3mm; flex-grow:1;">
+        <div class="ss-frame" style="flex-grow:1;">
+          <div class="ss-label">Screenshot 1 — Halaman Utama: Katalog Produk, Navbar SSE, Wishlist, Live Feed</div>
+          <img src="app_main_view.png" alt="Halaman Utama" style="width:100%; display:block; max-height:115mm; object-fit:cover;" onerror="this.style.display='none'">
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-clipboard-list"></i> Komponen Antarmuka</div>
+        <ul>
+          <li><strong>Navigation Bar:</strong> Logo, SSE Status Indicator (●Live), tombol Live Feed, Pesanan, Wishlist (badge ❤️), Keranjang (badge 🛒).</li>
+          <li><strong>Hero Section:</strong> Judul aplikasi, deskripsi teknis, dan badge teknologi (Node.js, REST API, SSE, Vanilla JS).</li>
+          <li><strong>Katalog Produk:</strong> Grid responsif 3 kolom. Setiap kartu memiliki tombol hati ❤️ untuk Wishlist, badge stok terbatas, dan tombol "Tambah ke Keranjang".</li>
+          <li><strong>Live Activity Feed:</strong> Panel floating di kanan bawah menampilkan event SSE real-time dari server secara otomatis.</li>
+        </ul>
+        <div class="highlight-box hb-indigo" style="margin-top:auto;">
+          <strong style="color:var(--primary);">Prinsip Client-Server:</strong> Seluruh data katalog dimuat dari server via <code>GET /api/products</code>. Client <em>tidak menyimpan state</em> secara lokal — semua state dikontrol oleh Server.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Demo Antarmuka Utama</span>
+    <span class="slide-num">6</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 7: FITUR 1 - PAYMENT GATEWAY ==================== -->
+<section class="slide">
+  <div class="glow-1"></div><div class="glow-green"></div>
+  <div class="slide-header">
+    <span class="tag">Fitur 1 — Payment Gateway</span>
+    <span class="topic">Validasi Server-Side Pembayaran</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Payment Gateway — Validasi Nominal Server-Side</h2>
+    <div class="grid-2">
+      <div class="ss-frame">
+        <div class="ss-label">Screenshot 2 — Modal Pembayaran: Invoice PENDING + Input Nominal + Preview Kembalian</div>
+        <img src="payment_modal.png" alt="Payment Modal" style="width:100%; display:block; max-height:120mm; object-fit:cover;" onerror="this.style.display='none'">
+      </div>
+      <div class="card">
+        <div class="card-title green"><i class="fa-solid fa-shield-halved"></i> Alur Payment (2 Fase)</div>
+        <div style="display:flex; flex-direction:column; gap:2mm;">
+          <div class="highlight-box hb-yellow" style="margin-top:0;">
+            <strong style="color:var(--yellow);">FASE 1 — Checkout (POST /api/checkout)</strong><br>
+            <span style="font-size:0.75rem;">Server membuat transaksi status <strong>PENDING</strong> dan mengosongkan keranjang. Stok <em>belum dipotong</em>.</span>
+          </div>
+          <div class="highlight-box hb-green" style="margin-top:0;">
+            <strong style="color:var(--green);">FASE 2 — Payment (POST /api/payment)</strong><br>
+            <span style="font-size:0.75rem;">Server menerima <code>transactionId</code> + <code>amount</code>. <strong>Server memvalidasi:</strong> apakah amount ≥ total tagihan. Jika lolos → stok dipotong, status jadi PAID. Jika kurang → Error 400.</span>
+          </div>
+        </div>
+        <hr class="divider">
+        <div class="card-title" style="font-size:0.88rem; color:var(--accent);"><i class="fa-solid fa-triangle-exclamation"></i> Prinsip Keamanan Kritis</div>
+        <ul style="font-size:0.78rem;">
+          <li>Harga produk <strong>tidak pernah dikirim dari Client</strong> — Server menghitung total dari database server.</li>
+          <li>Client <strong>tidak dapat memanipulasi total tagihan</strong> karena Server memeriksa nilai dari in-memory store-nya sendiri.</li>
+          <li>Validasi nominal pembayaran dilakukan <strong>100% di Server</strong> — Client hanya mengirimkan angka.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Fitur 1: Payment Gateway</span>
+    <span class="slide-num">7</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 8: FITUR 2 - WISHLIST + SSE ==================== -->
+<section class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div>
+  <div class="slide-header">
+    <span class="tag">Fitur 2 & 3 — Wishlist & SSE Live Feed</span>
+    <span class="topic">Manajemen State & Server Push</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Wishlist & Live Activity Feed (SSE)</h2>
+    <div class="grid-2">
+      <div class="ss-frame">
+        <div class="ss-label">Screenshot 3 — Sidebar Wishlist (kiri) & Panel SSE Live Feed (kanan)</div>
+        <img src="wishlist_sse.png" alt="Wishlist dan SSE" style="width:100%; display:block; max-height:120mm; object-fit:cover;" onerror="this.style.display='none'">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:3mm;">
+        <div class="card">
+          <div class="card-title accent"><i class="fa-solid fa-heart"></i> Wishlist — State di Server</div>
+          <ul style="font-size:0.78rem;">
+            <li>Klik ikon ❤️ pada produk → Client mengirim <code>POST /api/wishlist</code>.</li>
+            <li>Server memvalidasi <strong>duplikasi</strong> — jika produk sudah ada, Server mengembalikan <span style="color:var(--accent);">409 Conflict</span>.</li>
+            <li>Client menerima konfirmasi, lalu <em>memperbarui tampilan</em> ikon hati menjadi merah.</li>
+            <li>Sidebar Wishlist: Tombol <strong>Pindah ke Keranjang</strong> untuk langsung memindahkan item.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title" style="color:#4ade80;"><i class="fa-solid fa-satellite-dish"></i> SSE Live Feed — Server Push</div>
+          <ul style="font-size:0.78rem;">
+            <li>Client membuka <strong>satu koneksi persisten</strong> ke <code>GET /api/events</code> menggunakan <code>EventSource</code> API.</li>
+            <li>Server menyimpan referensi koneksi dan <strong>broadcast event ke semua client</strong> yang terhubung setiap ada aksi (keranjang, wishlist, pembayaran, tracking).</li>
+            <li><strong>Berbeda dari REST:</strong> Tidak ada polling — Server yang aktif mengirimkan data saat event terjadi.</li>
+          </ul>
+          <div class="highlight-box hb-green" style="margin-top:auto; font-size:0.72rem;">
+            <strong style="color:var(--green);">Perbedaan paradigma:</strong> REST = <em>Client Pull</em> | SSE = <em>Server Push</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Fitur 2 & 3: Wishlist & SSE</span>
+    <span class="slide-num">8</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 9: FITUR 4 - ORDER TRACKING ==================== -->
+<section class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div>
+  <div class="slide-header">
+    <span class="tag">Fitur 4 — Order Tracking</span>
+    <span class="topic">Pembaruan Status Pesanan</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Order Tracking — Pembaruan Status di Server</h2>
+    <div class="grid-2">
+      <div class="ss-frame">
+        <div class="ss-label">Screenshot 4 — Modal Riwayat & Tracking Pesanan: Progress Step Pengiriman</div>
+        <img src="order_tracking.png" alt="Order Tracking" style="width:100%; display:block; max-height:120mm; object-fit:cover;" onerror="this.style.display='none'">
+      </div>
+      <div class="card">
+        <div class="card-title primary"><i class="fa-solid fa-map-location-dot"></i> Alur Status Pesanan</div>
+        <div style="display:flex; flex-direction:column; gap:2.5mm; margin-bottom:3mm;">
+          <div class="flow-row">
+            <div class="flow-box yellow" style="font-size:0.68rem;">⏳ PENDING<br><span style="color:var(--text-muted);font-size:0.6rem;">Menunggu Pembayaran</span></div>
+            <div class="flow-arr">→</div>
+            <div class="flow-box green" style="font-size:0.68rem;">✅ PAID<br><span style="color:var(--text-muted);font-size:0.6rem;">Lunas & Diproses</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-box cyan" style="font-size:0.68rem;">⚙️ PROCESSING<br><span style="color:var(--text-muted);font-size:0.6rem;">Sedang Dikemas</span></div>
+            <div class="flow-arr">→</div>
+            <div class="flow-box cyan" style="font-size:0.68rem;">🚚 SHIPPED<br><span style="color:var(--text-muted);font-size:0.6rem;">Dikirim Kurir</span></div>
+            <div class="flow-arr">→</div>
+            <div class="flow-box green" style="font-size:0.68rem;">📦 DELIVERED<br><span style="color:var(--text-muted);font-size:0.6rem;">Diterima</span></div>
+          </div>
+        </div>
+        <hr class="divider">
+        <div class="card-title" style="font-size:0.88rem;"><i class="fa-solid fa-gears"></i> Mekanisme API</div>
+        <ul style="font-size:0.77rem;">
+          <li>Client mengirim <code>PUT /api/transactions/:id/status</code> untuk memajukan status.</li>
+          <li>Server memvalidasi: pesanan harus berstatus <strong>PAID</strong> dan <strong>belum DELIVERED</strong>.</li>
+          <li>Server memperbarui <code>trackingStatus</code> ke tahap berikutnya dalam urutan yang ditentukan server (bukan client).</li>
+          <li>Setelah update, Server <strong>broadcast SSE event</strong> <code>order_status_updated</code> ke semua client yang terhubung.</li>
+        </ul>
+        <div class="highlight-box hb-indigo" style="margin-top:auto; font-size:0.72rem;">
+          Client <strong>tidak dapat melompat status</strong> (misal dari PENDING ke DELIVERED). Urutan sepenuhnya dikontrol oleh logika Server.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Fitur 4: Order Tracking</span>
+    <span class="slide-num">9</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 10: SEQUENCE DIAGRAM ==================== -->
+<section class="slide">
+  <div class="glow-1"></div>
+  <div class="slide-header">
+    <span class="tag">Sequence Diagram</span>
+    <span class="topic">Alur Interaksi Client-Server</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Diagram Alur: Kenapa Payment yang Dibedah?</h2>
+    <div class="grid-2">
+      <div class="card" style="padding:2mm; align-items:center; justify-content:center;">
+        <div class="card-title" style="margin-bottom:2mm;"><i class="fa-solid fa-code-branch"></i> Sequence Diagram Pembayaran</div>
+        <img src="sequence_flow_diagram.png" alt="Sequence Diagram" style="width:100%; border-radius:5px; border:1px solid var(--border);" onerror="this.style.display='none'">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:3mm;">
+        <div class="card">
+          <div class="card-title yellow"><i class="fa-solid fa-1"></i> Fase Checkout</div>
+          <ol style="font-size:0.75rem; margin-left:14px;">
+            <li>User klik "Checkout Sekarang".</li>
+            <li>Client kirim <code>POST /api/checkout</code>.</li>
+            <li>Server validasi stok semua item.</li>
+            <li>Server buat transaksi <strong>PENDING</strong>, kosongkan cart.</li>
+            <li>Server kirim response: ID transaksi + total tagihan.</li>
+            <li>Client tampilkan <strong>Payment Modal</strong>.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <div class="card-title green"><i class="fa-solid fa-2"></i> Fase Payment (Inti Validasi)</div>
+          <ol style="font-size:0.75rem; margin-left:14px;">
+            <li>User input nominal uang, klik "Bayar".</li>
+            <li>Client kirim <code>POST /api/payment</code> dengan <code>amount</code>.</li>
+            <li><strong>Server validasi:</strong> <code>amount ≥ total</code>. Jika gagal → Error 400.</li>
+            <li>Server potong stok, ubah status → <strong>PAID</strong>.</li>
+            <li>Server broadcast SSE event ke semua client.</li>
+            <li>Client terima response kembalian, tampilkan modal sukses.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Sequence Diagram Checkout & Payment</span>
+    <span class="slide-num">10</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 11: IMPLEMENTASI KODE ==================== -->
+<section class="slide">
+  <div class="glow-1"></div>
+  <div class="slide-header">
+    <span class="tag">Implementasi</span>
+    <span class="topic">Kode Utama Server & Client</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Implementasi Kode & Diagram Modul</h2>
+    <div class="grid-2" style="flex-grow:1; align-items:stretch;">
+      <!-- LEFT: Module Architecture SVG Diagram -->
+      <div style="display:flex; flex-direction:column; gap:3mm;">
+        <div class="card" style="flex-grow:1; padding:3mm; display:flex; flex-direction:column; justify-content:flex-start;">
+          <div class="card-title" style="margin-bottom:2mm; flex-shrink:0;"><i class="fa-solid fa-folder-open"></i> Arsitektur Modul Program</div>
+          <div style="flex-grow:1; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+            <svg width="100%" height="auto" viewBox="0 0 320 230" style="max-height:100%; max-width:100%;">
+            <defs>
+              <marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#06b6d4"/>
+              </marker>
+              <marker id="arr2" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#6366f1"/>
+              </marker>
+            </defs>
+            <!-- CLIENT side box -->
+            <rect x="5" y="5" width="140" height="220" rx="6" fill="#131b2e" stroke="#06b6d4" stroke-width="1.5"/>
+            <text x="75" y="22" font-family="Outfit,sans-serif" font-size="9" fill="#06b6d4" text-anchor="middle" font-weight="700">CLIENT-SIDE MODULES</text>
+            <!-- index.html -->
+            <rect x="15" y="32" width="120" height="42" rx="4" fill="#1e293b" stroke="rgba(255,255,255,0.1)"/>
+            <text x="75" y="47" font-family="monospace" font-size="8" fill="#f8fafc" text-anchor="middle">index.html</text>
+            <text x="75" y="60" font-family="sans-serif" font-size="6.5" fill="#94a3b8" text-anchor="middle">Struktur DOM &amp; Layout</text>
+            <text x="75" y="70" font-family="sans-serif" font-size="6" fill="#64748b" text-anchor="middle">Modal · Sidebar · Nav</text>
+            <!-- connector -->
+            <path d="M 75 74 L 75 84" stroke="#06b6d4" stroke-width="1" fill="none" marker-end="url(#arr)"/>
+            <!-- app.js -->
+            <rect x="15" y="84" width="120" height="42" rx="4" fill="#1e293b" stroke="rgba(255,255,255,0.1)"/>
+            <text x="75" y="99" font-family="monospace" font-size="8" fill="#f8fafc" text-anchor="middle">app.js</text>
+            <text x="75" y="112" font-family="sans-serif" font-size="6.5" fill="#94a3b8" text-anchor="middle">Fetch API · SSE EventSource</text>
+            <text x="75" y="122" font-family="sans-serif" font-size="6" fill="#64748b" text-anchor="middle">Wishlist · Payment · Tracking</text>
+            <!-- connector -->
+            <path d="M 75 126 L 75 136" stroke="#06b6d4" stroke-width="1" fill="none" marker-end="url(#arr)"/>
+            <!-- style.css -->
+            <rect x="15" y="136" width="120" height="42" rx="4" fill="#1e293b" stroke="rgba(255,255,255,0.1)"/>
+            <text x="75" y="151" font-family="monospace" font-size="8" fill="#f8fafc" text-anchor="middle">style.css</text>
+            <text x="75" y="164" font-family="sans-serif" font-size="6.5" fill="#94a3b8" text-anchor="middle">Dark Mode · Glassmorphism</text>
+            <text x="75" y="174" font-family="sans-serif" font-size="6" fill="#64748b" text-anchor="middle">Animations · Responsive</text>
+            <!-- HTTP arrow between CLIENT and SERVER -->
+            <path d="M 145 80 L 175 80" stroke="#06b6d4" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+            <text x="160" y="74" font-family="sans-serif" font-size="5.5" fill="#06b6d4" text-anchor="middle">HTTP Req</text>
+            <path d="M 175 105 L 145 105" stroke="#6366f1" stroke-width="1.5" fill="none" marker-end="url(#arr2)"/>
+            <text x="160" y="116" font-family="sans-serif" font-size="5.5" fill="#6366f1" text-anchor="middle">JSON/SSE</text>
+            <!-- SERVER side box -->
+            <rect x="175" y="5" width="140" height="220" rx="6" fill="#131b2e" stroke="#6366f1" stroke-width="1.5"/>
+            <text x="245" y="22" font-family="Outfit,sans-serif" font-size="9" fill="#6366f1" text-anchor="middle" font-weight="700">SERVER-SIDE MODULES</text>
+            <!-- server.js -->
+            <rect x="185" y="32" width="120" height="42" rx="4" fill="#1e293b" stroke="rgba(255,255,255,0.1)"/>
+            <text x="245" y="47" font-family="monospace" font-size="8" fill="#f8fafc" text-anchor="middle">server.js</text>
+            <text x="245" y="60" font-family="sans-serif" font-size="6.5" fill="#94a3b8" text-anchor="middle">Express Routing · Middleware</text>
+            <text x="245" y="70" font-family="sans-serif" font-size="6" fill="#64748b" text-anchor="middle">CORS · JSON · Static · SSE</text>
+            <!-- connector -->
+            <path d="M 245 74 L 245 84" stroke="#6366f1" stroke-width="1" fill="none" marker-end="url(#arr2)"/>
+            <!-- In-Memory Store -->
+            <rect x="185" y="84" width="120" height="55" rx="4" fill="#1d121f" stroke="#f43f5e" stroke-width="1"/>
+            <text x="245" y="99" font-family="sans-serif" font-size="8" fill="#f8fafc" text-anchor="middle" font-weight="700">In-Memory Store</text>
+            <text x="245" y="112" font-family="monospace" font-size="6.5" fill="#94a3b8" text-anchor="middle">products[] · cart[]</text>
+            <text x="245" y="122" font-family="monospace" font-size="6.5" fill="#94a3b8" text-anchor="middle">transactions[] · wishlist[]</text>
+            <text x="245" y="132" font-family="monospace" font-size="6" fill="#64748b" text-anchor="middle">sseClients[]</text>
+            <!-- connector -->
+            <path d="M 245 139 L 245 149" stroke="#6366f1" stroke-width="1" fill="none" marker-end="url(#arr2)"/>
+            <!-- Middleware box -->
+            <rect x="185" y="149" width="120" height="42" rx="4" fill="#1e293b" stroke="rgba(255,255,255,0.1)"/>
+            <text x="245" y="164" font-family="sans-serif" font-size="8" fill="#f8fafc" text-anchor="middle" font-weight="700">Middleware Layer</text>
+            <text x="245" y="177" font-family="sans-serif" font-size="6.5" fill="#94a3b8" text-anchor="middle">cors() · json() · static()</text>
+            <text x="245" y="187" font-family="sans-serif" font-size="6" fill="#64748b" text-anchor="middle">Logging · broadcastEvent()</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <!-- RIGHT: 2 code blocks stacked -->
+      <div style="display:grid; grid-template-rows:1fr 1fr; gap:3mm;">
+      <!-- Server: Payment Validation -->
+      <div class="card" style="padding:2mm;">
+        <div class="card-title green" style="font-size:0.82rem; margin-bottom:1.5mm;"><i class="fa-solid fa-server"></i> Server: Validasi Payment</div>
+        <div class="editor" style="flex-grow:1;">
+          <div class="editor-top"><div class="dots"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>server.js — /api/payment</span></div>
+          <div class="editor-body" style="font-size:0.58rem;">app.<span class="fn">post</span>(<span class="str">'/api/payment'</span>, (req, res) => {
+  <span class="kw">const</span> { transactionId, amount } = req.body;
+  <span class="kw">const</span> trx = transactions.<span class="fn">find</span>(t => t.id === transactionId);
+
+  <span class="cm">// ★ Validasi Kritis Server-Side</span>
+  <span class="kw">if</span> (amount &lt; trx.total) {
+    <span class="kw">return</span> res.status(<span class="num">400</span>).json({
+      status: <span class="str">'error'</span>,
+      message: <span class="str">`Kurang Rp ${trx.total - amount}`</span>
+    });
+  }
+  <span class="cm">// Potong stok HANYA setelah valid</span>
+  <span class="kw">for</span> (<span class="kw">let</span> item <span class="kw">of</span> trx.items) {
+    <span class="kw">const</span> p = products.<span class="fn">find</span>(p => p.id === item.productId);
+    p.stock -= item.quantity;
+  }
+  trx.status = <span class="str">'PAID'</span>;
+  <span class="fn">broadcastEvent</span>(<span class="str">'payment_received'</span>, {...});
+  res.json({ status: <span class="str">'success'</span>, ... });
+});</div>
+        </div>
+      </div>
+      <!-- Server: SSE -->
+      <div class="card" style="padding:2mm;">
+        <div class="card-title" style="color:#4ade80; font-size:0.82rem; margin-bottom:1.5mm;"><i class="fa-solid fa-satellite-dish"></i> Server: SSE Endpoint</div>
+        <div class="editor" style="flex-grow:1;">
+          <div class="editor-top"><div class="dots"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>server.js — /api/events</span></div>
+          <div class="editor-body" style="font-size:0.58rem;"><span class="cm">// Server-Sent Events: Server Push</span>
+app.<span class="fn">get</span>(<span class="str">'/api/events'</span>, (req, res) => {
+  <span class="cm">// Set headers SSE</span>
+  res.<span class="fn">setHeader</span>(<span class="str">'Content-Type'</span>, <span class="str">'text/event-stream'</span>);
+  res.<span class="fn">setHeader</span>(<span class="str">'Cache-Control'</span>, <span class="str">'no-cache'</span>);
+  res.<span class="fn">setHeader</span>(<span class="str">'Connection'</span>, <span class="str">'keep-alive'</span>);
+  res.<span class="fn">flushHeaders</span>();
+
+  <span class="cm">// Simpan referensi koneksi client</span>
+  <span class="kw">const</span> clientId = Date.<span class="fn">now</span>();
+  sseClients.<span class="fn">push</span>({ id: clientId, res });
+
+  <span class="cm">// Kirim event selamat datang</span>
+  res.<span class="fn">write</span>(<span class="str">`event: connected\ndata: ${JSON.stringify({...})}\n\n`</span>);
+
+  <span class="cm">// Hapus saat client disconnect</span>
+  req.<span class="fn">on</span>(<span class="str">'close'</span>, () => {
+    sseClients = sseClients.<span class="fn">filter</span>(c => c.id !== clientId);
+  });
+});</div>
+        </div>
+      </div>
+      <!-- Client: SSE Listener -->
+      <!-- Client: SSE highlight box (code detail di Slide 7) -->
+      <div class="card" style="padding:3mm;">
+        <div class="card-title primary" style="font-size:0.82rem; margin-bottom:2mm;"><i class="fa-solid fa-laptop-code"></i> Client: SSE EventSource (app.js)</div>
+        <div class="highlight-box hb-indigo" style="margin-top:0; margin-bottom:2mm; font-size:0.74rem;">
+          <strong style="color:var(--primary);">new EventSource('/api/events')</strong> — Client membuka satu koneksi HTTP persisten ke server. Berbeda dari Fetch API yang request-response dan selesai, koneksi SSE tetap terbuka dan <strong>server dapat mengirimkan data kapan saja</strong>.
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:2mm; font-size:0.72rem;">
+          <div class="highlight-box hb-cyan" style="margin-top:0;">
+            <strong style="color:var(--secondary);">Event yang didengarkan:</strong><br>
+            <code>payment_received</code><br>
+            <code>cart_updated</code><br>
+            <code>wishlist_updated</code><br>
+            <code>order_status_updated</code>
+          </div>
+          <div class="highlight-box hb-green" style="margin-top:0;">
+            <strong style="color:var(--green);">Perbedaan paradigma:</strong><br>
+            REST = <em>Client Pull</em><br>
+            (client minta → server jawab)<br><br>
+            SSE = <em>Server Push</em><br>
+            (server kirim tanpa diminta)
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Implementasi Kode Utama</span>
+    <span class="slide-num">11</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 12: KEAMANAN ==================== -->
+<section class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div>
+  <div class="slide-header">
+    <span class="tag">Aspek Keamanan</span>
+    <span class="topic">Server-Side Validation & Proteksi</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Aspek Keamanan Client-Server</h2>
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-title accent"><i class="fa-solid fa-person-through-window"></i> Price Tampering</div>
+        <p class="para" style="font-size:0.76rem;"><strong>Ancaman:</strong> Client memodifikasi harga barang di payload HTTP Request sebelum checkout.</p>
+        <div class="highlight-box hb-green" style="font-size:0.72rem;">
+          <strong style="color:var(--green);">✓ Dimitigasi:</strong> Server tidak menerima harga dari client sama sekali. Request hanya membawa <code>productId</code> & <code>quantity</code>. Harga dihitung murni dari database server.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title accent"><i class="fa-solid fa-money-bill-transfer"></i> Payment Manipulation</div>
+        <p class="para" style="font-size:0.76rem;"><strong>Ancaman:</strong> Client mengirim nominal pembayaran yang lebih kecil dari total tagihan untuk "membeli gratis".</p>
+        <div class="highlight-box hb-green" style="font-size:0.72rem;">
+          <strong style="color:var(--green);">✓ Dimitigasi:</strong> Server memvalidasi <code>amount >= total</code> sebelum memproses. Jika kurang, server mengembalikan <code>HTTP 400</code> dengan detail kekurangan.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title accent"><i class="fa-solid fa-clone"></i> Wishlist Duplikasi</div>
+        <p class="para" style="font-size:0.76rem;"><strong>Ancaman:</strong> Client mengirim multiple request untuk menambah produk yang sama ke wishlist.</p>
+        <div class="highlight-box hb-green" style="font-size:0.72rem;">
+          <strong style="color:var(--green);">✓ Dimitigasi:</strong> Server memeriksa array wishlist dan mengembalikan <code>HTTP 409 Conflict</code> jika produk sudah ada. Client-side cache hanya sebagai UI hint.
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:3mm; display:grid; grid-template-columns:1fr 1fr; gap:4mm;">
+      <div class="highlight-box hb-yellow" style="margin-top:0; font-size:0.76rem;">
+        <strong style="color:var(--yellow);">⚠️ Status Jumping Attack:</strong> Client tidak dapat melompat status tracking pesanan. Server hanya memperbolehkan transisi berurutan: PROCESSING → SHIPPED → DELIVERED. Setiap request divalidasi posisi status saat ini.
+      </div>
+      <div class="highlight-box hb-red" style="margin-top:0; font-size:0.76rem;">
+        <strong style="color:var(--accent);">⚠️ Keterbatasan:</strong> Aplikasi tidak menggunakan HTTPS, autentikasi JWT, atau sanitasi XSS aktif. Data bersifat volatil (in-memory). Ini disebabkan batasan implementasi lokal — pada sistem produksi, ketiganya wajib ada.
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Aspek Keamanan</span>
+    <span class="slide-num">12</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 13: METODOLOGI & PENGUJIAN ==================== -->
+<section class="slide">
+  <div class="glow-1"></div>
+  <div class="slide-header">
+    <span class="tag">Pengujian</span>
+    <span class="topic">Black-Box Testing</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Hasil Pengujian Skenario Black-Box</h2>
+    <div class="card" style="flex-grow:1;">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Skenario Pengujian</th><th>Endpoint</th><th>Input</th><th>Hasil yang Diharapkan</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>TC-01</td>
+            <td>Muat katalog produk</td>
+            <td><code>GET /api/products</code></td>
+            <td>Buka halaman</td>
+            <td>5 produk tampil dengan harga & stok</td>
+            <td><span class="badge badge-pass">✓ PASS</span></td>
+          </tr>
+          <tr>
+            <td>TC-02</td>
+            <td>Tambah produk ke wishlist</td>
+            <td><code>POST /api/wishlist</code></td>
+            <td>Klik ikon ❤️</td>
+            <td>Produk masuk wishlist, ikon hati jadi merah</td>
+            <td><span class="badge badge-pass">✓ PASS</span></td>
+          </tr>
+          <tr>
+            <td>TC-03</td>
+            <td>Duplikasi wishlist</td>
+            <td><code>POST /api/wishlist</code></td>
+            <td>Klik ❤️ produk yg sama 2x</td>
+            <td>Server: <code>HTTP 409 Conflict</code> — "Sudah ada di wishlist"</td>
+            <td><span class="badge badge-pass">✓ PASS</span></td>
+          </tr>
+          <tr>
+            <td>TC-04</td>
+            <td>Checkout → PENDING</td>
+            <td><code>POST /api/checkout</code></td>
+            <td>Klik "Checkout Sekarang"</td>
+            <td>Transaksi PENDING dibuat, keranjang kosong, stok belum terpotong</td>
+            <td><span class="badge badge-pass">✓ PASS</span></td>
+          </tr>
+          <tr>
+            <td>TC-05</td>
+            <td>Bayar dengan nominal kurang</td>
+            <td><code>POST /api/payment</code></td>
+            <td>Amount &lt; Total Tagihan</td>
+            <td>Server: <code>HTTP 400</code> — detail jumlah kekurangan</td>
+            <td><span class="badge badge-pass">✓ PASS</span></td>
+          </tr>
+          <tr>
+            <td>TC-06</td>
+            <td>Bayar dengan nominal cukup</td>
+            <td><code>POST /api/payment</code></td>
+            <td>Amount ≥ Total Tagihan</td>
+            <td>Status → PAID, stok terpotong, kembalian dihitung</td>
+            <td><span class="badge badge-pass">✓ PASS</span></td>
+          </tr>
+          <tr>
+            <td>TC-07</td>
+            <td>Tracking: Kirim paket</td>
+            <td><code>PUT /api/transactions/:id/status</code></td>
+            <td>Klik "Simulasikan Kirim"</td>
+            <td>Status PROCESSING → SHIPPED, SSE broadcast dikirim</td>
+            <td><span class="badge badge-pass">✓ PASS</span></td>
+          </tr>
+          <tr>
+            <td>TC-08</td>
+            <td>SSE Live Feed terhubung</td>
+            <td><code>GET /api/events</code></td>
+            <td>Buka halaman aplikasi</td>
+            <td>Indikator hijau ●Live muncul, event real-time tampil di panel</td>
+            <td><span class="badge badge-pass">✓ PASS</span></td>
+          </tr>
+          <tr>
+            <td>TC-09</td>
+            <td>Data hilang saat restart server</td>
+            <td>—</td>
+            <td>Kill & restart server</td>
+            <td>Semua data transaksi & wishlist kembali kosong (volatil)</td>
+            <td><span class="badge badge-warn">⚠ KETERBATASAN</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Hasil Pengujian Black-Box</span>
+    <span class="slide-num">13</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 14: PEMBAHASAN ==================== -->
+
+<!-- ==================== SLIDE 15: API RESPONSE 1 ==================== -->
+<section class="slide">
+  <div class="glow-1"></div>
+  <div class="slide-header">
+    <span class="tag">Pengujian API</span>
+    <span class="topic">Response JSON Server (1/3)</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Hasil Response API: Wishlist & Checkout</h2>
+    <div class="grid-2">
+      <!-- POST /api/wishlist -->
+      <div class="card" style="padding:2mm;">
+        <div class="card-title accent"><i class="fa-solid fa-heart"></i> POST /api/wishlist (Duplikasi)</div>
+        <div class="editor" style="flex-grow:1;">
+          <div class="editor-top"><div class="dots"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>HTTP 409 Conflict</span></div>
+          <div class="editor-body" style="font-size:0.65rem; color:#e2e8f0; font-family:monospace;">
+<span style="color:#f43f5e">POST</span> /api/wishlist
+<span style="color:#94a3b8">Content-Type: application/json</span>
+
+{
+  <span style="color:#06b6d4">"productId"</span>: <span style="color:#f59e0b">2</span>
+}
+
+<span style="color:#94a3b8">================ RESPONSE ================</span>
+<span style="color:#f43f5e">HTTP/1.1 409 Conflict</span>
+{
+  <span style="color:#06b6d4">"status"</span>: <span style="color:#22c55e">"error"</span>,
+  <span style="color:#06b6d4">"message"</span>: <span style="color:#22c55e">"Produk sudah ada di wishlist"</span>
+}</div>
+        </div>
+      </div>
+      <!-- POST /api/checkout -->
+      <div class="card" style="padding:2mm;">
+        <div class="card-title yellow"><i class="fa-solid fa-cart-shopping"></i> POST /api/checkout (Sukses)</div>
+        <div class="editor" style="flex-grow:1;">
+          <div class="editor-top"><div class="dots"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>HTTP 201 Created</span></div>
+          <div class="editor-body" style="font-size:0.65rem; color:#e2e8f0; font-family:monospace;">
+<span style="color:#f59e0b">POST</span> /api/checkout
+
+<span style="color:#94a3b8">================ RESPONSE ================</span>
+<span style="color:#22c55e">HTTP/1.1 201 Created</span>
+{
+  <span style="color:#06b6d4">"status"</span>: <span style="color:#22c55e">"success"</span>,
+  <span style="color:#06b6d4">"message"</span>: <span style="color:#22c55e">"Transaksi PENDING dibuat"</span>,
+  <span style="color:#06b6d4">"data"</span>: {
+    <span style="color:#06b6d4">"transactionId"</span>: <span style="color:#22c55e">"TRX-178001"</span>,
+    <span style="color:#06b6d4">"total"</span>: <span style="color:#f59e0b">15000000</span>,
+    <span style="color:#06b6d4">"status"</span>: <span style="color:#22c55e">"PENDING"</span>,
+    <span style="color:#06b6d4">"items"</span>: [
+      { <span style="color:#06b6d4">"productId"</span>: <span style="color:#f59e0b">1</span>, <span style="color:#06b6d4">"quantity"</span>: <span style="color:#f59e0b">1</span> }
+    ]
+  }
+}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Response API Server</span>
+    <span class="slide-num">14</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 16: API RESPONSE 2 ==================== -->
+<section class="slide">
+  <div class="glow-1"></div><div class="glow-green"></div>
+  <div class="slide-header">
+    <span class="tag">Pengujian API</span>
+    <span class="topic">Response JSON Server (2/3)</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Hasil Response API: Payment Gateway Validation</h2>
+    <div class="grid-2">
+      <!-- POST /api/payment ERROR -->
+      <div class="card" style="padding:2mm;">
+        <div class="card-title accent"><i class="fa-solid fa-money-bill-transfer"></i> POST /api/payment (Manipulasi Harga)</div>
+        <div class="editor" style="flex-grow:1;">
+          <div class="editor-top"><div class="dots"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>HTTP 400 Bad Request</span></div>
+          <div class="editor-body" style="font-size:0.65rem; color:#e2e8f0; font-family:monospace;">
+<span style="color:#22c55e">POST</span> /api/payment
+<span style="color:#94a3b8">Content-Type: application/json</span>
+
+{
+  <span style="color:#06b6d4">"transactionId"</span>: <span style="color:#22c55e">"TRX-178001"</span>,
+  <span style="color:#06b6d4">"amount"</span>: <span style="color:#f59e0b">1000</span> <span style="color:#64748b">// Client memanipulasi jumlah</span>
+}
+
+<span style="color:#94a3b8">================ RESPONSE ================</span>
+<span style="color:#f43f5e">HTTP/1.1 400 Bad Request</span>
+{
+  <span style="color:#06b6d4">"status"</span>: <span style="color:#22c55e">"error"</span>,
+  <span style="color:#06b6d4">"message"</span>: <span style="color:#22c55e">"Nominal pembayaran kurang Rp 14.999.000"</span>
+}</div>
+        </div>
+      </div>
+      <!-- POST /api/payment SUCCESS -->
+      <div class="card" style="padding:2mm;">
+        <div class="card-title green"><i class="fa-solid fa-money-bill-transfer"></i> POST /api/payment (Valid Sukses)</div>
+        <div class="editor" style="flex-grow:1;">
+          <div class="editor-top"><div class="dots"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>HTTP 200 OK</span></div>
+          <div class="editor-body" style="font-size:0.65rem; color:#e2e8f0; font-family:monospace;">
+<span style="color:#22c55e">POST</span> /api/payment
+<span style="color:#94a3b8">Content-Type: application/json</span>
+
+{
+  <span style="color:#06b6d4">"transactionId"</span>: <span style="color:#22c55e">"TRX-178001"</span>,
+  <span style="color:#06b6d4">"amount"</span>: <span style="color:#f59e0b">15000000</span>
+}
+
+<span style="color:#94a3b8">================ RESPONSE ================</span>
+<span style="color:#22c55e">HTTP/1.1 200 OK</span>
+{
+  <span style="color:#06b6d4">"status"</span>: <span style="color:#22c55e">"success"</span>,
+  <span style="color:#06b6d4">"message"</span>: <span style="color:#22c55e">"Pembayaran berhasil. Kembalian: Rp 0"</span>,
+  <span style="color:#06b6d4">"data"</span>: {
+    <span style="color:#06b6d4">"status"</span>: <span style="color:#22c55e">"PAID"</span>
+  }
+}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Response API Server</span>
+    <span class="slide-num">15</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 17: API RESPONSE 3 ==================== -->
+<section class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div>
+  <div class="slide-header">
+    <span class="tag">Pengujian API</span>
+    <span class="topic">Response JSON Server (3/3)</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Hasil Response API: Tracking & SSE Stream</h2>
+    <div class="grid-2">
+      <!-- PUT /api/transactions/:id/status -->
+      <div class="card" style="padding:2mm;">
+        <div class="card-title cyan"><i class="fa-solid fa-truck"></i> PUT /api/transactions/:id/status</div>
+        <div class="editor" style="flex-grow:1;">
+          <div class="editor-top"><div class="dots"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>HTTP 200 OK</span></div>
+          <div class="editor-body" style="font-size:0.65rem; color:#e2e8f0; font-family:monospace;">
+<span style="color:#06b6d4">PUT</span> /api/transactions/TRX-178001/status
+
+<span style="color:#94a3b8">================ RESPONSE ================</span>
+<span style="color:#22c55e">HTTP/1.1 200 OK</span>
+{
+  <span style="color:#06b6d4">"status"</span>: <span style="color:#22c55e">"success"</span>,
+  <span style="color:#06b6d4">"message"</span>: <span style="color:#22c55e">"Status pesanan TRX-178001 diperbarui ke SHIPPED"</span>,
+  <span style="color:#06b6d4">"data"</span>: {
+    <span style="color:#06b6d4">"transactionId"</span>: <span style="color:#22c55e">"TRX-178001"</span>,
+    <span style="color:#06b6d4">"newStatus"</span>: <span style="color:#22c55e">"SHIPPED"</span>
+  }
+}</div>
+        </div>
+      </div>
+      <!-- GET /api/events SSE -->
+      <div class="card" style="padding:2mm;">
+        <div class="card-title primary"><i class="fa-solid fa-satellite-dish"></i> GET /api/events (SSE Stream)</div>
+        <div class="editor" style="flex-grow:1;">
+          <div class="editor-top"><div class="dots"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>text/event-stream</span></div>
+          <div class="editor-body" style="font-size:0.65rem; color:#e2e8f0; font-family:monospace;">
+<span style="color:#22c55e">GET</span> /api/events
+<span style="color:#94a3b8">Accept: text/event-stream</span>
+
+<span style="color:#94a3b8">========== CONTINUOUS RESPONSE ==========</span>
+<span style="color:#22c55e">HTTP/1.1 200 OK</span>
+<span style="color:#94a3b8">Content-Type: text/event-stream</span>
+
+<span style="color:#f59e0b">event:</span> connected
+<span style="color:#06b6d4">data:</span> {"message": "Terkoneksi ke Live Feed server"}
+
+<span style="color:#f59e0b">event:</span> order_status_updated
+<span style="color:#06b6d4">data:</span> {"message": "Status pesanan TRX-178001 berubah menjadi SHIPPED"}
+
+<span style="color:#64748b">... (Koneksi tetap terbuka, menuggu event)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Response API Server</span>
+    <span class="slide-num">16</span>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div>
+  <div class="slide-header">
+    <span class="tag">Pembahasan</span>
+    <span class="topic">Analisis Fitur vs Prinsip Client-Server</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Pembahasan: Pemetaan Fitur & Prinsip</h2>
+    <div class="card" style="flex-grow:1;">
+      <table style="font-size:0.72rem;">
+        <thead>
+          <tr>
+            <th>Fitur</th>
+            <th>Prinsip Client-Server yang Didemonstrasikan</th>
+            <th>Endpoint Kunci</th>
+            <th>Validasi Server-Side</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Katalog & Keranjang</strong></td>
+            <td>Stateless REST — setiap request independen, server menyimpan state</td>
+            <td><code>GET /api/products</code>, <code>POST /api/cart</code></td>
+            <td>Cek stok saat tambah keranjang</td>
+          </tr>
+          <tr>
+            <td><strong>Wishlist</strong></td>
+            <td>Server sebagai <em>single source of truth</em> untuk state data</td>
+            <td><code>POST /api/wishlist</code></td>
+            <td>Validasi duplikasi — HTTP 409</td>
+          </tr>
+          <tr>
+            <td><strong>Payment Gateway</strong></td>
+            <td>Server-Side Validation — client tidak dipercaya untuk validasi bisnis</td>
+            <td><code>POST /api/checkout</code>, <code>POST /api/payment</code></td>
+            <td>amount ≥ total; harga dari DB server</td>
+          </tr>
+          <tr>
+            <td><strong>Order Tracking</strong></td>
+            <td>State Machine di Server — urutan transisi dikontrol server</td>
+            <td><code>PUT /api/transactions/:id/status</code></td>
+            <td>Status harus urut, tidak bisa lompat</td>
+          </tr>
+          <tr>
+            <td><strong>Live Feed (SSE)</strong></td>
+            <td><em>Server Push</em> — server aktif mengirim event tanpa request client</td>
+            <td><code>GET /api/events</code></td>
+            <td>Koneksi persisten; broadcast ke semua</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:3mm; display:grid; grid-template-columns:1fr 1fr 1fr; gap:4mm;">
+      <div class="highlight-box hb-indigo" style="margin-top:0; font-size:0.72rem;">
+        <strong style="color:var(--primary);">Stateless REST</strong> terbukti efisien untuk operasi CRUD. Selaras dengan Fielding (2000) bahwa pemisahan client-server meningkatkan skalabilitas komponen secara independen.
+      </div>
+      <div class="highlight-box hb-green" style="margin-top:0; font-size:0.72rem;">
+        <strong style="color:var(--green);">Single-threaded event loop</strong> Node.js menangani SSE persistent connections dengan baik, membuktikan teori Tilkov & Vinoski (2010) tentang efisiensi non-blocking I/O.
+      </div>
+      <div class="highlight-box hb-yellow" style="margin-top:0; font-size:0.72rem;">
+        <strong style="color:var(--yellow);">Keterbatasan in-memory:</strong> Data volatil & tidak ada isolasi antar user. Sistem produksi membutuhkan database persisten dan autentikasi JWT (Laudon & Traver, 2021).
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Pembahasan</span>
+    <span class="slide-num">17</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 18: KESIMPULAN ==================== -->
+<section class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div>
+  <div class="slide-header">
+    <span class="tag">Kesimpulan & Saran</span>
+    <span class="topic">Rangkuman Penelitian</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Kesimpulan & Saran Pengembangan</h2>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-check-double"></i> Kesimpulan Utama</div>
+        <ol>
+          <li>Arsitektur <strong>Client-Server berbasis REST API</strong> dengan format pertukaran data JSON sangat andal untuk memisahkan logika presentasi dari logika bisnis server.</li>
+          <li>Fitur <strong>Payment Gateway 2-fase</strong> (Checkout PENDING → Payment PAID) berhasil mendemonstrasikan pentingnya validasi bisnis di sisi server, termasuk pencegahan price-tampering dan payment manipulation.</li>
+          <li>Fitur <strong>Wishlist</strong> memperlihatkan server sebagai <em>single source of truth</em> dengan validasi duplikasi berbasis HTTP status code semantik (409 Conflict).</li>
+          <li>Fitur <strong>Order Tracking</strong> mengilustrasikan konsep <em>state machine</em> yang dikontrol penuh oleh server — client tidak dapat memaksa transisi status yang tidak valid.</li>
+          <li><strong>Server-Sent Events (SSE)</strong> berhasil mengimplementasikan paradigma <em>Server Push</em>, berbeda secara fundamental dari pola <em>Client Pull</em> pada REST biasa.</li>
+        </ol>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-lightbulb"></i> Saran Pengembangan Lanjut</div>
+        <ul>
+          <li><strong>Database Persisten:</strong> Integrasikan MySQL/PostgreSQL atau MongoDB agar data tidak hilang saat server restart.</li>
+          <li><strong>Autentikasi JWT:</strong> Tambahkan sistem login dengan JSON Web Token agar setiap user memiliki keranjang, wishlist, dan riwayat transaksi yang privat.</li>
+          <li><strong>WebSocket:</strong> Tingkatkan SSE ke WebSocket untuk komunikasi <em>dua arah</em> real-time (misal: chat dukungan, notifikasi harga berubah).</li>
+          <li><strong>HTTPS & Rate Limiting:</strong> Aktifkan TLS/SSL dan batasi jumlah request per IP untuk keamanan production.</li>
+          <li><strong>Microservices:</strong> Pisahkan Payment Service, Catalog Service, dan Notification Service menjadi layanan independen seperti arsitektur Shopee/Tokopedia sesungguhnya.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Kesimpulan & Saran</span>
+    <span class="slide-num">18</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 19: DAFTAR PUSTAKA ==================== -->
+<section class="slide">
+  <div class="glow-1"></div>
+  <div class="slide-header">
+    <span class="tag">Daftar Pustaka</span>
+    <span class="topic">Referensi Akademik</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Daftar Pustaka</h2>
+    <div class="card" style="flex-grow:1;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:4mm;">
+        <div>
+          <p class="para" style="font-size:0.79rem; text-indent:-12px; padding-left:12px;">[1] Fielding, R. T. (2000). <em>Architectural Styles and the Design of Network-based Software Architectures.</em> Doctoral dissertation, University of California, Irvine.</p>
+          <p class="para" style="font-size:0.79rem; text-indent:-12px; padding-left:12px;">[2] Tilkov, S., & Vinoski, S. (2010). Node.js: Using JavaScript to Build High-Performance Network Programs. <em>IEEE Internet Computing</em>, 14(6), 80–83.</p>
+          <p class="para" style="font-size:0.79rem; text-indent:-12px; padding-left:12px;">[3] OpenJS Foundation. (2024). <em>Node.js v20.x/v24.x Documentation.</em> Diakses dari https://nodejs.org/docs/</p>
+          <p class="para" style="font-size:0.79rem; text-indent:-12px; padding-left:12px;">[4] OWASP Foundation. (2023). <em>OWASP API Security Top 10 — 2023.</em> OWASP API Security Project.</p>
+        </div>
+        <div>
+          <p class="para" style="font-size:0.79rem; text-indent:-12px; padding-left:12px;">[5] Haverbeke, M. (2018). <em>Eloquent JavaScript: A Modern Introduction to Programming (3rd ed.).</em> No Starch Press.</p>
+          <p class="para" style="font-size:0.79rem; text-indent:-12px; padding-left:12px;">[6] Kurose, J. F., & Ross, K. W. (2021). <em>Computer Networking: A Top-Down Approach (8th ed.).</em> Pearson.</p>
+          <p class="para" style="font-size:0.79rem; text-indent:-12px; padding-left:12px;">[7] Laudon, K. C., & Traver, C. G. (2021). <em>E-commerce 2021: Business, Technology, Society (17th ed.).</em> Pearson.</p>
+          <p class="para" style="font-size:0.79rem; text-indent:-12px; padding-left:12px;">[8] W3C. (2021). <em>Server-Sent Events — W3C Recommendation.</em> Diakses dari https://www.w3.org/TR/eventsource/</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Daftar Pustaka</span>
+    <span class="slide-num">19</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 20: LAMPIRAN & PANDUAN ==================== -->
+<section class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div>
+  <div class="slide-header">
+    <span class="tag">Lampiran</span>
+    <span class="topic">Panduan Instalasi & Struktur Proyek</span>
+  </div>
+  <div class="slide-body">
+    <h2 class="slide-title">Panduan Instalasi & Struktur Proyek</h2>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-play"></i> Cara Menjalankan Aplikasi</div>
+        <ol>
+          <li>Pastikan <strong>Node.js</strong> versi ≥ 16 sudah terinstall.</li>
+          <li>Buka folder proyek <code>app/</code> di terminal.</li>
+          <li>Install dependensi:<br>
+            <code style="display:block; margin-top:2mm; padding:4px 8px; background:#080b13; border-radius:4px;">npm install</code>
+          </li>
+          <li>Jalankan server:<br>
+            <code style="display:block; margin-top:2mm; padding:4px 8px; background:#080b13; border-radius:4px;">node server.js</code>
+          </li>
+          <li>Buka browser, akses:<br>
+            <code style="display:block; margin-top:2mm; padding:4px 8px; background:#080b13; border-radius:4px; color:#22c55e;">http://localhost:3000</code>
+          </li>
+          <li>SSE Live Feed aktif otomatis saat halaman dibuka.</li>
+        </ol>
+        <div class="highlight-box hb-cyan" style="margin-top:auto; font-size:0.72rem;">
+          <strong style="color:var(--secondary);">Teknologi yang digunakan:</strong> Node.js v24 · Express.js · Vanilla HTML/CSS/JS · Fetch API · EventSource (SSE) · In-Memory Store
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-folder-tree"></i> Struktur Direktori</div>
+        <div class="editor" style="flex-grow:1; font-size:0.7rem;">
+          <div class="editor-top"><div class="dots"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>Project Structure</span></div>
+          <div class="editor-body" style="font-size:0.65rem; line-height:1.5;">📂 ECOMEERCER/
+├── 📂 app/
+│   ├── 📂 public/
+│   │   ├── 📂 images/         # Gambar produk (jpg)
+│   │   ├── 📄 index.html      # Halaman utama web client
+│   │   ├── 📄 style.css       # Dark Mode UI stylesheet
+│   │   └── 📄 app.js          # Client Fetch API + SSE logic
+│   ├── 📄 package.json
+│   └── 📄 server.js           # REST API + SSE Backend Server
+│
+├── 📂 slides/
+│   ├── 📄 slides.html         # Presentasi HTML (file ini)
+│   ├── 📄 architecture_diagram.png
+│   ├── 📄 app_main_view.png
+│   ├── 📄 payment_modal.png
+│   ├── 📄 order_tracking.png
+│   ├── 📄 wishlist_sse.png
+│   └── 📄 sequence_flow_diagram.png
+│
+└── 📄 Tugas_Akhir_Client_Server_Programming.pdf</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="author">Program Studi Informatika UNP — Shadafi Fastiyan (23343084)</span>
+    <span>Lampiran — Panduan & Struktur Proyek</span>
+    <span class="slide-num">20</span>
+  </div>
+</section>
+
+
+
+</body>
+</html>

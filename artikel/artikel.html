@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Laporan Proyek Akhir - E-Commerce Client-Server</title>
+  <style>
+    :root {
+      --font-main: "Times New Roman", Times, serif;
+    }
+    
+    @page {
+      size: A4;
+      margin: 3cm 2.5cm 3cm 3cm; 
+    }
+
+    body {
+      font-family: var(--font-main);
+      color: #000;
+      background-color: #fff;
+      line-height: 1.5;
+      font-size: 12pt;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 21cm;
+      margin: 0 auto;
+      text-align: justify;
+    }
+
+    /* Page Breaks */
+    .page-break {
+      page-break-before: always;
+      clear: both;
+    }
+
+    /* Page Setup */
+    .page-content {
+      min-height: 22cm;
+      position: relative;
+    }
+
+    /* Cover Page */
+    .cover-page {
+      text-align: center;
+      min-height: 22cm;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1cm;
+      padding-bottom: 1cm;
+    }
+    .cover-title {
+      font-size: 16pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 1.5cm;
+      line-height: 1.5;
+    }
+    .cover-purpose {
+      font-size: 12pt;
+      margin-bottom: 2cm;
+    }
+    .cover-logo {
+      font-size: 70pt;
+      margin-bottom: 2cm;
+    }
+    .cover-author {
+      font-size: 12pt;
+      font-weight: bold;
+      margin-bottom: 2cm;
+      text-transform: uppercase;
+    }
+    .cover-inst {
+      font-size: 14pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      line-height: 1.5;
+    }
+
+    /* Headings */
+    h1 {
+      font-size: 14pt;
+      font-weight: bold;
+      text-align: center;
+      text-transform: uppercase;
+      margin-top: 0cm;
+      margin-bottom: 1cm;
+    }
+    h2 {
+      font-size: 12pt;
+      font-weight: bold;
+      margin-top: 0.5cm;
+      margin-bottom: 0.3cm;
+    }
+
+    p {
+      text-indent: 1cm;
+      margin-top: 0;
+      margin-bottom: 0.4cm;
+    }
+
+    /* Lists */
+    ul, ol {
+      margin-top: 0;
+      margin-bottom: 0.4cm;
+      padding-left: 1.5cm;
+    }
+    li {
+      margin-bottom: 0.2cm;
+    }
+
+    /* Code Blocks */
+    pre {
+      background-color: #f4f4f4;
+      border: 1px solid #ddd;
+      padding: 10px;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 9.5pt;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin: 0.3cm 0;
+      break-inside: avoid;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.5cm 0;
+      font-size: 11pt;
+      break-inside: avoid;
+    }
+    th, td {
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #e9e9e9;
+      text-align: center;
+    }
+
+    /* Images / Figures */
+    .figure {
+      margin: 0.5cm 0;
+      text-align: center;
+      break-inside: avoid;
+    }
+    .figure img, .figure svg {
+      max-width: 95%;
+      height: auto;
+      border: 1px solid #ccc;
+    }
+    .figure-caption {
+      font-size: 11pt;
+      margin-top: 0.2cm;
+      text-align: center;
+    }
+
+    /* References */
+    .ref-list {
+      font-size: 12pt;
+      padding-left: 1cm;
+      text-indent: -1cm;
+      margin-bottom: 0.3cm;
+    }
+    
+    .toc-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.2cm;
+    }
+    .toc-dots {
+      flex-grow: 1;
+      border-bottom: 1px dotted #000;
+      margin: 0 10px;
+      position: relative;
+      top: -4px;
+    }
+    
+    /* Mermaid diagram container */
+    .mermaid {
+      display: flex;
+      justify-content: center;
+      margin: 1cm 0;
+      break-inside: avoid;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- PAGE 1: COVER PAGE -->
+    <div class="page-content">
+      <div class="cover-page">
+        <div class="cover-title">
+          LAPORAN PROYEK AKHIR<br>
+          IMPLEMENTASI ARSITEKTUR REST API PADA SISTEM E-COMMERCE DENGAN PENANGANAN KONKURENSI DAN VALIDASI SISI SERVER
+        </div>
+        <div class="cover-purpose">
+          Laporan ini disusun untuk memenuhi Tugas Akhir<br>
+          Mata Kuliah Client-Server Programming
+        </div>
+        <div class="cover-logo">
+          <svg width="150" height="150" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <div class="cover-author">
+          Disusun Oleh:<br><br>
+          SHADAFI FASTIYAN<br>
+          NIM: 23343084
+        </div>
+        <div class="cover-inst">
+          Dosen Pengampu: Vikri Aulia, S.Pd., M.Kom.<br><br>
+          PROGRAM STUDI INFORMATIKA<br>
+          UNIVERSITAS NEGERI PADANG<br>
+          2026
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 2: KATA PENGANTAR -->
+    <div class="page-break"></div>
+    <div class="page-content">
+      <br><br>
+      <h1>KATA PENGANTAR</h1>
+      <p>Puji syukur penulis panjatkan ke hadirat Tuhan Yang Maha Esa atas segala rahmat dan karunia-Nya, sehingga penulis dapat menyelesaikan penyusunan laporan proyek akhir yang berjudul "Implementasi Arsitektur REST API pada Sistem E-Commerce dengan Penanganan Konkurensi dan Validasi Sisi Server" ini dengan baik dan tepat waktu.</p>
+      <p>Laporan ini disusun sebagai salah satu syarat untuk memenuhi tugas akhir pada mata kuliah Client-Server Programming di Program Studi Informatika, Universitas Negeri Padang. Melalui proyek ini, penulis berharap dapat mengaplikasikan teori-teori jaringan komputer, arsitektur perangkat lunak, dan keamanan sistem ke dalam sebuah purwarupa aplikasi transaksi elektronik yang fungsional.</p>
+      <p>Penulis menyadari bahwa penyusunan laporan ini tidak lepas dari bimbingan, dukungan, dan bantuan dari berbagai pihak. Oleh karena itu, pada kesempatan ini penulis mengucapkan terima kasih yang sebesar-besarnya kepada Bapak Vikri Aulia, S.Pd., M.Kom. selaku dosen pengampu mata kuliah Client-Server Programming yang telah memberikan ilmu, arahan, serta masukan yang sangat berharga selama proses perkuliahan dan pengerjaan proyek ini.</p>
+      <p>Penulis menyadari sepenuhnya bahwa laporan ini masih memiliki banyak kekurangan, baik dari segi kedalaman materi maupun teknik penulisan, mengingat keterbatasan pengetahuan dan pengalaman penulis. Oleh karena itu, kritik dan saran yang bersifat membangun dari semua pihak sangat penulis harapkan demi perbaikan dan kesempurnaan di masa yang akan datang.</p>
+      <p>Akhir kata, penulis berharap laporan ini dapat memberikan manfaat serta wawasan tambahan bagi para pembaca, khususnya di bidang pengembangan perangkat lunak berbasis client-server dan keamanan antarmuka pemrograman aplikasi (API).</p>
+      <p style="text-align: right; margin-top: 2cm;">Padang, Juni 2026<br><br><br><br>Penulis</p>
+    </div>
+
+    <!-- PAGE 3: DAFTAR ISI -->
+    <div class="page-break"></div>
+    <div class="page-content">
+      <br><br>
+      <h1>DAFTAR ISI</h1>
+      <div style="font-weight: bold; margin-bottom: 0.5cm;">
+        <div class="toc-item"><span>KATA PENGANTAR</span><span class="toc-dots"></span><span>2</span></div>
+        <div class="toc-item"><span>DAFTAR ISI</span><span class="toc-dots"></span><span>3</span></div>
+        <div class="toc-item"><span>BAB I PENDAHULUAN</span><span class="toc-dots"></span><span>4</span></div>
+        <div class="toc-item"><span>BAB II TINJAUAN PUSTAKA</span><span class="toc-dots"></span><span>6</span></div>
+        <div class="toc-item"><span>BAB III METODOLOGI PENELITIAN</span><span class="toc-dots"></span><span>8</span></div>
+        <div class="toc-item"><span>BAB IV PERANCANGAN SISTEM</span><span class="toc-dots"></span><span>10</span></div>
+        <div class="toc-item"><span>BAB V IMPLEMENTASI SISTEM</span><span class="toc-dots"></span><span>12</span></div>
+        <div class="toc-item"><span>BAB VI PENGUJIAN DAN HASIL</span><span class="toc-dots"></span><span>15</span></div>
+        <div class="toc-item"><span>BAB VII KESIMPULAN DAN SARAN</span><span class="toc-dots"></span><span>16</span></div>
+        <div class="toc-item"><span>DAFTAR PUSTAKA</span><span class="toc-dots"></span><span>17</span></div>
+      </div>
+      <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    </div>
+
+    <!-- PAGE 4: BAB I (Part 1) -->
+    <div class="page-break"></div>
+    <div class="page-content">
+      <h1>BAB I<br>PENDAHULUAN</h1>
+      <h2>1.1 Latar Belakang</h2>
+      <p>Perkembangan teknologi informasi dan komunikasi dalam satu dekade terakhir telah mengubah lanskap perdagangan global secara fundamental. Pergeseran paradigma dari perdagangan konvensional (offline) menuju sistem perdagangan elektronik (e-commerce) menuntut infrastruktur perangkat lunak yang tangguh, terukur, dan aman. Di balik kemudahan pelanggan menelusuri katalog barang, memasukkan item ke dalam keranjang, dan melakukan pembayaran secara nirkabel, terdapat serangkaian kompleksitas komputasi jaringan yang terjadi di belakang layar (backend).</p>
+      <p>Aplikasi web modern secara masif mengadopsi arsitektur client-server yang terdistribusi. Antarmuka pengguna (frontend) berjalan di sisi peramban web pelanggan, sementara logika bisnis dan pemrosesan data dieksekusi di sisi server. Komunikasi di antara kedua entitas ini sangat bergantung pada Application Programming Interface (API), khususnya Representational State Transfer (REST). Protokol HTTP dimanfaatkan secara maksimal untuk melakukan transaksi pertukaran data dalam format JSON. Namun, perpisahan komponen fisik ini membawa sejumlah tantangan teknis yang kritis.</p>
+      <p>Tantangan terbesar bagi para insinyur perangkat lunak dalam sistem e-commerce adalah menjaga integritas dan konsistensi data secara real-time. Kasus umum yang sering memicu kegagalan sistem adalah masalah konkurensi (concurrency) dan race condition. Ketika sebuah toko online mengadakan kampanye penjualan kilat (flash sale), ribuan klien akan mengirimkan permintaan HTTP ke server secara bersamaan untuk membeli produk dengan persediaan terbatas. Apabila logika pengurangan stok barang tidak diimplementasikan dengan cermat, server dapat melayani permintaan yang masuk bersamaan secara redundan, mengakibatkan stok barang di basis data menjadi bernilai negatif. Hal ini disebut fenomena overselling yang berujung pada kerugian finansial maupun reputasi perusahaan.</p>
+      <p>Di samping masalah skalabilitas beban, keamanan API juga menjadi titik lemah yang krusial. Merujuk pada dokumentasi Open Worldwide Application Security Project (OWASP) Top 10 API Security, celah seperti BOLA (Broken Object Level Authorization) dan Mass Assignment menempati urutan teratas. Seringkali pengembang pemula menaruh kepercayaan penuh pada data yang dikirimkan oleh klien. Sebagai contoh, jika payload JSON dari proses checkout berisi parameter ID Produk, Jumlah, dan Harga, seorang peretas dengan mudah dapat mencegat request tersebut dan memodifikasi harganya menjadi Rp. 1 sebelum masuk ke server. Apabila server hanya menerima dan memproses data tersebut tanpa melakukan validasi otentik ke basis data internalnya (server-side validation), maka eksploitasi transaksi akan terjadi.</p>
+      <br>
+    </div>
+
+    <!-- PAGE 5: BAB I (Part 2) -->
+    <div class="page-break"></div>
+    <div class="page-content">
+      <br>
+      <p>Menyadari kedua masalah fundamental di atas, pengembangan arsitektur yang aman memerlukan rancangan khusus. Pemilihan platform Node.js dengan kerangka kerja Express.js menjadi salah satu solusi populer di industri. Node.js memiliki arsitektur single-threaded event loop yang memproses eksekusi sinkron secara bergiliran tanpa interupsi thread. Berdasarkan latar belakang tersebut, laporan ini akan menyajikan perancangan komprehensif mengenai implementasi client-server programming yang utuh.</p>
+
+      <h2>1.2 Rumusan Masalah</h2>
+      <p>Rumusan masalah dalam penyusunan proyek perangkat lunak ini adalah sebagai berikut:</p>
+      <ol>
+        <li>Bagaimana merancang arsitektur REST API yang bersifat stateless?</li>
+        <li>Bagaimana mencegah manipulasi stok barang ganda (race condition)?</li>
+        <li>Bagaimana menerapkan teknik Server-Side Validation guna menangkal eksploitasi harga?</li>
+      </ol>
+
+      <h2>1.3 Tujuan Penelitian</h2>
+      <p>Tujuan dari pengembangan sistem ini adalah:</p>
+      <ol>
+        <li>Membangun arsitektur dasar REST API e-commerce.</li>
+        <li>Mendemonstrasikan penyelesaian asinkronisasi inventori menggunakan eksekusi atomik array Node.js.</li>
+        <li>Menghasilkan sistem transaksi yang kebal terhadap kerentanan mass assignment harga.</li>
+      </ol>
+
+      <h2>1.4 Batasan Masalah</h2>
+      <p>Batasan masalah dalam penelitian ini adalah sebagai berikut:</p>
+      <ol>
+        <li>Seluruh persistensi data direkayasa di dalam in-memory server aplikasi.</li>
+        <li>Arsitektur aplikasi server berjalan pada single process thread Node.js.</li>
+        <li>Fokus simulasi e-commerce ini tidak mencakup Payment Gateway asli.</li>
+      </ol>
+      <br><br><br><br><br>
+    </div>
+
+    <!-- PAGE 6: BAB II (Part 1) -->
+    <div class="page-break"></div>
+    <div class="page-content">
+      <h1>BAB II<br>TINJAUAN PUSTAKA</h1>
+      <h2>2.1 Konsep Sistem E-Commerce</h2>
+      <p>Electronic Commerce (E-commerce) mengacu pada segala bentuk proses transaksi jual beli produk yang difasilitasi oleh medium internet (Laudon & Traver, 2021). E-commerce mengubah operasional ritel menjadi platform swalayan digital yang dapat diakses 24 jam penuh.</p>
+      <p>Secara arsitektural, platform belanja modern terdiri dari komponen front-office yang menangani interaksi pengguna dan back-office yang bertugas melakukan rekonsiliasi stok persediaan inventori (inventory sync), memastikan ketersediaan barang fisik di gudang sesuai dengan angka yang tertulis di basis data saat transaksi disahkan pengguna.</p>
+
+      <h2>2.2 Arsitektur REST API</h2>
+      <p>Representational State Transfer (REST) adalah rancangan gaya arsitektur jaringan yang diciptakan oleh Roy Fielding (Fielding, 2000). REST API menjadi standar untuk komunikasi antar mesin (machine-to-machine).</p>
+      <p>Kriteria utama REST API meliputi Client-Server Separation (pemisahan klien dan penyimpan data), Statelessness (setiap request harus mandiri tanpa mengingat sesi server), dan Uniform Interface (menggunakan protokol kata kerja HTTP seperti GET, POST, PUT, DELETE secara seragam).</p>
+
+      <h2>2.3 Node.js dan Single-Threaded Event Loop</h2>
+      <p>Node.js hadir memadukan V8 JavaScript Engine dengan pustaka libuv. Node.js mengadopsi pendekatan Asynchronous Non-Blocking I/O dalam arsitektur Single-Threaded Event Loop. Node.js hanya menggunakan satu thread pemrosesan utama untuk merespons ribuan koneksi (OpenJS Foundation, 2024).</p>
+      <p>Konsekuensi desain single-thread ini adalah "Atomicity" untuk kode operasi sinkron (synchronous blocking code). Komputasi pengubahan array stok barang tidak akan diinterupsi oleh request pembeli lain sebelum blok fungsinya tuntas.</p>
+      <br><br><br><br>
+    </div>
+
+    <!-- PAGE 7: BAB II (Part 2) -->
+    <div class="page-break"></div>
+    <div class="page-content">
+      <br>
+      <h2>2.4 Konkurensi dan Race Condition</h2>
+      <p>Konkurensi dalam ilmu komputer adalah kemampuan sistem menangani instruksi bersamaan (Kurose & Ross, 2021). Masalah yang sering terjadi dalam e-commerce adalah "Race Condition".</p>
+      <p>Race condition terjadi apabila dua proses mencoba membaca nilai basis data lalu memperbaruinya pada waktu berdekatan. Misalnya sisa stok baju adalah 1 buah. Pembeli A dan B menekan beli bersamaan. Jika sistem memvalidasi stok (1 cukup untuk dibeli 1) secara bersamaan, maka hasil akhir stok menjadi negatif. Hal ini memerlukan penanganan khusus di tingkat kode atau basis data.</p>
+
+      <h2>2.5 Keamanan API (OWASP Top 10)</h2>
+      <p>Laporan "OWASP API Security Top 10" sering dijadikan kiblat standar industri (OWASP Foundation, 2023).</p>
+      <p>Salah satu parameter ancaman utama adalah "Mass Assignment". Kerentanan ini terjadi saat API memetakan semua parameter payload JSON langsung ke objek internal. Peretas menyusupkan harga fiktif ke dalam request. Pencegahannya menuntut implementasi Server-Side Validation secara mutlak.</p>
+      <br><br><br><br><br><br><br><br><br><br><br><br>
+    </div>
+
+    <!-- PAGE 8: BAB III (Part 1) -->
+    <div class="page-break"></div>
+    <div class="page-content">
+      <h1>BAB III<br>METODOLOGI PENELITIAN</h1>
+      <h2>3.1 Alur Penelitian</h2>
+      <p>Dalam pengembangan proyek perangkat lunak simulasi e-commerce ini, digunakan metodologi iteratif secara linear untuk menjamin fungsionalitas yang tepat sasaran.</p>
+
+      <div class="figure">
+        <div class="mermaid">
+          flowchart TD
+            A[1. Studi Literatur] --> B[2. Perancangan Sistem]
+            B --> C[3. Implementasi Kode]
+            C --> D[4. Pengujian & Evaluasi]
+            style A fill:#e8f4f8,stroke:#0077b6,stroke-width:2px,color:#000
+            style B fill:#e8f4f8,stroke:#0077b6,stroke-width:2px,color:#000
+            style C fill:#e8f4f8,stroke:#0077b6,stroke-width:2px,color:#000
+            style D fill:#e8f4f8,stroke:#0077b6,stroke-width:2px,color:#000
+        </div>
+        <div class="figure-caption">Gambar 3.1 Diagram Alur Pelaksanaan Penelitian</div>
+      </div>
+      
+      <p>Penelitian diawali dengan observasi kepustakaan yang difokuskan pada V8 engine JavaScript, pola desain stateless REST API, serta OWASP. Kemudian dirancang topologi interaksi antara front-end peramban web dan back-end API.</p>
+    </div>
+
+    <!-- PAGE 9: BAB III (Part 2) -->
+    <div class="page-break"></div>
+    <div class="page-content">
+      <br>
+      <h2>3.2 Spesifikasi Perangkat Keras dan Lunak</h2>
+      <p>Penelitian perangkat lunak dan komputasi skrip dilakukan dengan memanfaatkan spesifikasi perangkat pendukung berikut:</p>
+      <ul>
+        <li><strong>Perangkat Keras (Hardware):</strong>
+          <ul>
+            <li>Prosesor sentral dengan arsitektur x86_64 multi-core.</li>
+            <li>Kapasitas memori akses acak (RAM) 8GB atau lebih yang menjamin tidak terjadinya bottleneck saat V8 engine mengompilasi JIT.</li>
+            <li>Penyimpanan solid state drive (SSD) berkecepatan tinggi.</li>
+          </ul>
+        </li>
+        <li><strong>Perangkat Lunak (Software):</strong>
+          <ul>
+            <li><strong>Node.js v24.x LTS:</strong> Runtime platform JavaScript server-side.</li>
+            <li><strong>Express.js v4.x:</strong> Kerangka kerja routing aplikasi web ringan di Node.js.</li>
+            <li><strong>Cors:</strong> Pustaka middleware Node.js pendukung pertukaran Cross-Origin Resource Sharing.</li>
+            <li><strong>VS Code:</strong> Integrated Development Environment editor.</li>
+            <li><strong>Google Chrome Browser:</strong> Klien peramban untuk merender representasi HTML DOM interaktif.</li>
+          </ul>
+        </li>
+      </ul>
+
+      <h2>3.3 Metode Pengumpulan Data</h2>
+      <p>Data eksperimen dikumpulkan melalui proses Black-Box testing secara masif yang bertujuan mengobservasi validitas pemotongan nilai inventori di terminal server seiring penekanan transaksi di UI browser.</p>
+      <br><br><br><br><br><br><br>
+    </div>
+
+    <!-- PAGE 10: BAB IV (Part 1) -->
+    <div class="page-break"></div>
+    <div class="page-content">
+      <h1>BAB IV<br>PERANCANGAN SISTEM</h1>
+      <h2>4.1 Arsitektur Jaringan Client-Server</h2>
+      <p>Aplikasi dirancang menggunakan topologi terpusat dua tier, yang secara fisik membelah urusan presentasi antarmuka dan komputasi basis data logika pada port protokol yang berbeda.</p>
+      
+      <div class="figure">
+        <div class="mermaid">
+          flowchart LR
+            subgraph Client[WEB CLIENT Frontend]
+              direction TB
+              UI[HTML5 / CSS3]
+              JS[Vanilla JS Fetch]
+              UI --- JS
+            end
+            
+            subgraph Server[API SERVER Backend]
+              direction TB
+              API[Express.js Routers]
+              DB[(In-Memory Arrays:<br/>Products Stock & Cart)]
+              API <--> DB
+            end
+            
+            JS -- HTTP Request POST/GET --> API
+            API -- HTTP Response JSON --> JS
+            
+            style Client fill:#ffffff,stroke:#e63946,stroke-width:3px,color:#000
+            style Server fill:#ffffff,stroke:#1d3557,stroke-width:3px,color:#000
+            style UI fill:#f1faee,stroke:#1d3557
+            style JS fill:#f1faee,stroke:#1d3557
+            style API fill:#e8f4f8,stroke:#1d3557
+            style DB fill:#e8f4f8,stroke:#1d3557
+        </div>
+        <div class="figure-caption">Gambar 4.1 Pemisahan Arsitektur Logis Modul Aplikasi</div>
+      </div>
+      
+      <p>Fungsi dari struktur ini sangat kentara. Antarmuka Client Vanilla JS memiliki satu tujuan tunggal: bereaksi terhadap interaksi dan memperbarui DOM. Validasi keamanan diproses sepenuhnya di server.</p>
+    </div>
+
+    <!-- PAGE 11: BAB IV (Part 2) -->
+    <div class="page-break"></div>
+    <div class="page-content">
+      <br>
+      <h2>4.2 Desain Alur Kerja (Flowchart)</h2>
+      <p>Alur kerja difokuskan pada sinkronisasi proses checkout di server untuk memastikan keakuratan stok. Ketika pengguna menekan tombol bayar, server akan mengiterasi keranjang dan mengecek persediaan di basis data. Jika lolos uji verifikasi stok, barulah operasi aritmatika berjalan.</p>
+      
+      <div class="figure">
+        <div class="mermaid">
+          sequenceDiagram
+            actor User
+            participant Frontend
+            participant Server
+            participant Database
+            
+            User->>Frontend: Klik tombol Checkout
+            Frontend->>Server: POST /api/checkout (Cart Payload)
+            Server->>Database: Cek Stok Produk Saat Ini
+            Database-->>Server: Kembalikan Data Stok
+            
+            alt Stok Cukup & Valid
+                Server->>Database: Kurangi Stok Produk (Mutasi Atomik)
+                Server->>Database: Catat Riwayat Transaksi
+                Server-->>Frontend: HTTP 200 OK (Checkout Sukses)
+                Frontend-->>User: Tampilkan Modal Sukses
+            else Stok Tidak Cukup
+                Server-->>Frontend: HTTP 400 Bad Request (Stok Konflik)
+                Frontend-->>User: Tampilkan Notifikasi Error
+            end
+        </div>
+        <div class="figure-caption">Gambar 4.2 Sequence Diagram Proses Checkout yang Atomik</div>
+      </div>
+
+      <h2>4.3 Skema Representasi Data (JSON)</h2>
+      <p>Penyimpanan state sementara dalam lingkungan runtime direkayasa dalam deklarasi konstanta array objek di dalam file aplikasi server. Komponen data yang dirancang mencakup: Data Identitas Produk dan Nilai Sisa Persediaan (Inventory Stock), Struktur Keranjang Sementara Pelanggan, dan Riwayat Mutasi Invoice.</p>
+
+<pre>
+// Representasi Objek Produk Server (In-Memory Array)
+const products = [
+  { id: 101, name: "Nexus Pro Laptop", price: 15000000, stock: 5 },
+  { id: 102, name: "Mechanical Keyboard", price: 850000, stock: 12 },
+  { id: 103, name: "Gaming Mouse RGB", price: 450000, stock: 8 }
+];
+
+// Payload Standard Komunikasi JSON Klien-Server
+{
+  "status": "success",
+  "message": "Cart updated",
+  "data": [
+     { "productId": 102, "quantity": 1 }
+  ]
+}
+</pre>
+      <p>Konstruksi data ini memungkinkan antarmuka klien untuk mengurai balasan JSON dengan mudah tanpa parsing string yang kompleks. Pendekatan ini mempercepat proses loading DOM.</p>
+      <br><br><br><br>
+    </div>
+
+    <!-- PAGE 12: BAB V (Part 1 - Katalog Screen) -->
+    <div class="page-break"></div>
+    <div class="page-content">
+      <h1>BAB V<br>IMPLEMENTASI SISTEM</h1>
+      <h2>5.1 Implementasi Antarmuka Klien (Frontend)</h2>
+      <p>Antarmuka pengguna didesain semenarik mungkin menggunakan CSS khusus yang merender tata letak kotak fleksibel. Layar awal memuat produk secara dinamis melalui panggilan Fetch API.</p>
+
+      <div class="figure">
+        <img src="../slides/demo_browser.png" alt="Tampilan Katalog Web Klien">
+        <div class="figure-caption">Gambar 5.1 Implementasi Antarmuka Katalog Utama (Hasil GET /api/products)</div>
+      </div>
+
+<pre>
+// Cuplikan app.js (Sisi Client) - Pengunduhan Data Katalog
+async function fetchProducts() {
+  try {
+    const res = await fetch(`${API_URL}/products`);
+    const json = await res.json();
+    renderProducts(json.data);
+  } catch (error) {
+    showToast('Koneksi server gagal!', 'error');
+  }
+}
+</pre>
+      <p>Penulisan fetch() mendemonstrasikan bahwa klien bertindak pasif terhadap respons API.</p>
+    </div>
+
+    <!-- PAGE 13: BAB V (Part 2 - Cart Screen) -->
+    <div class="page-break"></div>
+    <div class="page-content">
+      <br>
+      <h2>5.2 Implementasi Backend dan Manajemen Keranjang</h2>
+      <p>Manajemen keranjang di-handle murni oleh server (REST stateless pada konteks ini). Ketika pelanggan menambah barang, ID dikirimkan melalui POST request.</p>
+
+      <div class="figure">
+        <img src="../slides/demo_cart.png" alt="Tampilan Keranjang Belanja">
+        <div class="figure-caption">Gambar 5.2 Antarmuka Modal Keranjang (Sinkronisasi Endpoint POST /api/cart)</div>
+      </div>
+
+<pre>
+// Mutasi Keranjang - Mengirim Data ke Server (Payload)
+async function addToCart(productId, quantity = 1) {
+  try {
+    const res = await fetch(`${API_URL}/cart`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId, quantity })
+    });
+    const result = await res.json();
+    if (res.ok) fetchCart(); // Sinkronisasi ulang DOM dari server
+  } catch (e) {
+    console.error(e);
+  }
+}
+</pre>
+      <p>Middleware <code>express.json()</code> dan ekstensi pertukaran lintas zona (CORS) diinjeksikan agar peramban tidak memblokir akses ke API.</p>
+    </div>
+
+    <!-- PAGE 14: BAB V (Part 3 - Checkout Screen & Atomicity) -->
+    <div class="page-break"></div>
+    <div class="page-content">
+      <br>
+      <h2>5.3 Mekanisme Atomik dan Mitigasi Keamanan pada Checkout</h2>
+      <p>Bagian krusial yang mendemonstrasikan penanganan eksploitasi parameter harga (OWASP) terdapat pada proses akhir transaksi atau checkout. Gambar berikut menunjukkan keberhasilan operasi checkout.</p>
+
+      <div class="figure">
+        <img src="../slides/demo_checkout.png" alt="Tampilan Riwayat Transaksi">
+        <div class="figure-caption">Gambar 5.3 Implementasi Pencatatan Riwayat Checkout Valid di Server</div>
+      </div>
+
+<pre>
+// Implementasi server.js (Blok Checkout)
+app.post('/api/checkout', (req, res) => {
+  let itemsToCheckout = [];
+  let totalBill = 0;
+
+  // BLOK 1: VALIDASI (Server-Side Pricing & Stock Integrity)
+  for (let item of cart) {
+    const product = products.find(p => p.id === item.productId);
+    if (!product || product.stock < item.quantity) return res.status(400); // Cegah overselling
+    
+    // Harga (price) ditarik MURNI dari database
+    totalBill += product.price * item.quantity;
+  }
+
+  // BLOK 2: MUTASI (Pengurangan stok atomik Single-Thread)
+  for (let item of cart) {
+    const product = products.find(p => p.id === item.productId);
+    product.stock -= item.quantity;
+  }
+  cart = []; res.json({ status: 'success' });
+});
+</pre>
+      <p>Operasi perulangan tanpa I/O asinkron di atas bersifat atomik. Ini mengunci proses hingga stok selesai direduksi.</p>
+    </div>
+
+    <!-- PAGE 15: BAB VI (Pengujian dan Terminal Log) -->
+    <div class="page-break"></div>
+    <div class="page-content">
+      <h1>BAB VI<br>PENGUJIAN DAN HASIL</h1>
+      <h2>6.1 Skenario Pengujian Black-Box</h2>
+      <p>Pembangunan sistem dilanjutkan pada pemenuhan fungsionalitas CRUD secara menyeluruh. Proses validasi Black-Box testing tidak melihat ke dalam sintaks source-code, melainkan menekan antarmuka.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th width="5%">No</th>
+            <th width="40%">Skenario Kasus Uji Interaktif</th>
+            <th width="55%">Hasil Evaluasi Server</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Load produk di beranda</td>
+            <td>[Sukses] <code>GET /products</code> membalas HTTP 200</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Tambah kuantitas melebihi stok aktual</td>
+            <td>[Sukses Ditolak] Menolak operasi, server kirim HTTP 400</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Update jumlah & hapus item di keranjang</td>
+            <td>[Sukses] Operasi <code>PUT/DELETE</code> tersinkronisasi.</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Checkout pesanan normal secara berulang</td>
+            <td>[Sukses] Transaksi dicatat akurat (HTTP 200).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>6.2 Observasi Aktivitas Server (Console Log)</h2>
+      <p>Log terminal sistem membuktikan pelacakan riwayat aktivitas klien (HTTP Request Trace) memitigasi anomali transaksi.</p>
+
+      <div class="figure">
+<pre style="text-align: left; background-color: #1e1e1e; color: #a6e22e; padding: 20px; font-size: 11pt; border-radius: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+> ecommerce-simple-client-server@1.0.0 start
+> node server.js
+
+===================================================
+ E-Commerce Client-Server App is running!
+ REST API URL: http://localhost:3000
+ Web Client URL: http://localhost:3000/index.html
+===================================================
+[HTTP Request] GET /api/products
+[HTTP Response] 200 OK
+[HTTP Request] GET /api/cart
+[HTTP Response] 200 OK
+[HTTP Request] POST /api/cart - Qty: 1
+[HTTP Response] 200 OK
+[HTTP Request] POST /api/cart - Qty: 1
+[HTTP Response] 400 OK
+[HTTP Request] POST /api/checkout
+[HTTP Response] 200 OK
+</pre>
+        <div class="figure-caption">Gambar 6.1 Bukti Log Terminal Keamanan Konkurensi 400 Bad Request</div>
+      </div>
+    </div>
+
+    <!-- PAGE 16: BAB VII (Kesimpulan) -->
+    <div class="page-break"></div>
+    <div class="page-content">
+      <h1>BAB VII<br>KESIMPULAN DAN SARAN</h1>
+      <h2>7.1 Kesimpulan</h2>
+      <p>Berdasarkan serangkaian studi literatur, perancangan arsitektur logis, penulisan baris kode, hingga hasil simulasi eksekusi terminal server yang dipaparkan, maka dapat ditarik kesimpulan bahwa:</p>
+      <ol>
+        <li>Pendekatan arsitektur perangkat lunak REST API yang diimplementasikan pada backend Node.js (Express) terbukti sangat reliabel untuk menangani komunikasi asinkron stateless antara web klien dan server, terbukti melalui respons endpoint JSON yang cepat tanpa membutuhkan perenderan HTML dinamis dari sisi server.</li>
+        <li>Perancangan keamanan bisnis yang difokuskan secara otoritatif di sisi backend sukses menutup rapat celah kerentanan pengubahan parameter keamanan (payload tampering). Mekanisme ini memastikan bahwa penetapan harga dan validitas inventori ditarik murni dari database memori lokal aplikasi, terlepas dari apa pun manipulasi permintaan JSON yang ditembakkan klien.</li>
+        <li>Karakteristik event-loop tunggal (single-threaded) pada V8 Engine Node.js menawarkan pendekatan alamiah untuk mencegah tumpang-tindih perhitungan (race condition). Mekanisme pengurangan stok secara sekuensial array di dalam blok fungsi eksekusi (atomic blocking loop) terbukti mutlak dapat mencegah terjadinya duplikasi pemesanan yang menyebabkan stok minus dalam simulasi skalabilitas jaringan instansi tunggal.</li>
+      </ol>
+
+      <h2>7.2 Saran</h2>
+      <p>Perancangan purwarupa dalam tugas akhir proyek ini merupakan model konseptual dari dasar-dasar Client-Server Programming. Mengingat arsitektur riil industri memegang kerumitan masif, penulis merangkum usulan pengembangan selanjutnya:</p>
+      <ol>
+        <li>Penggantian sistem state memori internal sementara ke layanan sistem database persisten berbasis relasional yang menanamkan teknologi transaksional (ACID), semisal PostgreSQL atau sistem Redis In-Memory khusus untuk lock antrean apabila aplikasi diekspansi ke arsitektur multi-node.</li>
+        <li>Meningkatkan autentikasi dan kerahasiaan payload dengan melampirkan JSON Web Token (JWT) pada header HTTP, untuk melindungi riwayat pesanan agar eksklusif.</li>
+      </ol>
+      <br><br><br><br><br><br><br>
+    </div>
+
+    <!-- PAGE 17: DAFTAR PUSTAKA -->
+    <div class="page-break"></div>
+    <div class="page-content">
+      <h1>DAFTAR PUSTAKA</h1>
+      <br>
+      <div class="ref-list">[1] R. T. Fielding, <em>Architectural Styles and the Design of Network-based Software Architectures</em>. Doctoral dissertation, University of California, Irvine, 2000.</div>
+      <div class="ref-list">[2] S. Tilkov and S. Vinoski, "Node.js: Using JavaScript to Build High-Performance Network Programs," <em>IEEE Internet Computing</em>, vol. 14, no. 6, pp. 80-83, 2010.</div>
+      <div class="ref-list">[3] OpenJS Foundation, <em>Node.js v24.x LTS Official Documentation</em>. https://nodejs.org/docs/, 2024.</div>
+      <div class="ref-list">[4] OWASP Foundation, <em>OWASP API Security Top 10 - 2023</em>. OWASP API Security Project, 2023.</div>
+      <div class="ref-list">[5] M. Haverbeke, <em>Eloquent JavaScript: A Modern Introduction to Programming (3rd ed.)</em>. No Starch Press, 2018.</div>
+      <div class="ref-list">[6] J. F. Kurose and K. W. Ross, <em>Computer Networking: A Top-Down Approach (8th ed.)</em>. Pearson, 2021.</div>
+      <div class="ref-list">[7] K. C. Laudon and C. G. Traver, <em>E-commerce 2021: Business, Technology, Society (17th ed.)</em>. Pearson, 2021.</div>
+    </div>
+
+  </div>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+  </script>
+</body>
+</html>
